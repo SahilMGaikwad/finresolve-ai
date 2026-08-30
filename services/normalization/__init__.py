@@ -1,17 +1,21 @@
 """
 FinResolve AI — Normalization Service
 
-Responsible for:
-- Converting heterogeneous financial records into a canonical internal schema
-- Standardizing field names, types, and formats
-- Normalizing currency representations (all amounts stored as integer minor units)
-- Normalizing timestamps to UTC
-- Handling merchant-specific record variations
+Converts validated source records into canonical internal form.
 
-Status: NOT IMPLEMENTED (Phase 2+)
+Components:
+- normalizer: Record normalization (amounts, timestamps, field mapping)
+- field_mappings: Source-system-specific field name mappings
 """
 
-# TODO(phase-2): Define canonical record schema
-# TODO(phase-2): Implement field mapping and type coercion
-# TODO(phase-2): Implement currency normalization to minor units
-# TODO(phase-2): Implement timestamp normalization to UTC
+from services.normalization.field_mappings import (
+    apply_field_mapping,
+    get_field_mapping,
+)
+from services.normalization.normalizer import normalize_record
+
+__all__ = [
+    "apply_field_mapping",
+    "get_field_mapping",
+    "normalize_record",
+]

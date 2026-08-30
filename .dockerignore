@@ -1,0 +1,35 @@
+# Git & IDE
+.git
+.gitignore
+.gemini
+.idea
+.vscode
+
+# Python Virtualenv & Cache
+.venv
+venv
+ENV
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.hypothesis
+.coverage
+htmlcov
+
+# Environment & Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Generated Artifacts & Datasets
+data/generated/
+data/manifests/
+*.log
+scratch/
+docs/
+
+# Tests (excluded from production image)
+tests/

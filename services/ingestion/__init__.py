@@ -1,17 +1,36 @@
 """
 FinResolve AI — Ingestion Service
 
-Responsible for:
-- Accepting raw financial records (payments, orders, settlements, refunds, etc.)
-- Validating record structure and required fields
-- Rejecting malformed or suspicious records
-- Assigning ingestion metadata (timestamps, source identifiers, ingestion IDs)
-- Forwarding validated records to the normalization service
+Processes raw financial records through validation, deduplication,
+and provenance assignment.
 
-Status: NOT IMPLEMENTED (Phase 2+)
+Components:
+- validator: Schema validation (ACCEPTED / QUARANTINED / INVALID)
+- ingestor: Idempotent ingestion pipeline with provenance
+- errors: Structured error types
 """
 
-# TODO(phase-2): Implement record ingestion pipeline
-# TODO(phase-2): Add input validation with Pydantic schemas
-# TODO(phase-2): Add structured logging for ingestion events
-# TODO(phase-2): Add malformed-record rejection and quarantine
+from services.ingestion.errors import (
+    DuplicateRecordError,
+    IngestionError,
+    MalformedDataError,
+    NormalizationError,
+    RelationshipError,
+    SchemaValidationError,
+)
+from services.ingestion.ingestor import IngestionResult, Ingestor, compute_content_hash
+from services.ingestion.validator import ValidationResult, validate_record
+
+__all__ = [
+    "DuplicateRecordError",
+    "IngestionError",
+    "IngestionResult",
+    "Ingestor",
+    "MalformedDataError",
+    "NormalizationError",
+    "RelationshipError",
+    "SchemaValidationError",
+    "ValidationResult",
+    "compute_content_hash",
+    "validate_record",
+]

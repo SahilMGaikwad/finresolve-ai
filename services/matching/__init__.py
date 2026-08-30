@@ -1,17 +1,25 @@
 """
 FinResolve AI — Matching Service
 
-Responsible for:
-- Matching related financial records across data sources
-- Deterministic matching on shared identifiers (payment_id, order_id, etc.)
-- Fuzzy matching on amount, timestamp proximity, and metadata similarity
-- Producing match groups with confidence scores
-- Identifying unmatched records for investigation
-
-Status: NOT IMPLEMENTED (Phase 2+)
+Deterministic multi-signal matching for financial records.
 """
 
-# TODO(phase-2): Implement deterministic ID-based matching
-# TODO(phase-2): Implement fuzzy matching with configurable thresholds
-# TODO(phase-2): Implement match-group construction
-# TODO(phase-2): Track match confidence scores
+from services.matching.matcher import MatcherConfig, RecordMatcher, evaluate_pair
+from services.matching.signals import (
+    evaluate_amount_signal,
+    evaluate_currency_signal,
+    evaluate_merchant_signal,
+    evaluate_reference_signal,
+    evaluate_timestamp_proximity_signal,
+)
+
+__all__ = [
+    "MatcherConfig",
+    "RecordMatcher",
+    "evaluate_amount_signal",
+    "evaluate_currency_signal",
+    "evaluate_merchant_signal",
+    "evaluate_pair",
+    "evaluate_reference_signal",
+    "evaluate_timestamp_proximity_signal",
+]

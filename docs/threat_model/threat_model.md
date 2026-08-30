@@ -174,6 +174,120 @@ The system handles financial records, which are high-value targets. The combinat
 | **Detection** | 1. Duplicate idempotency key detection. 2. Request pattern analysis for replayed sequences. |
 | **Residual Risk** | Low — Idempotency enforcement handles the primary impact. |
 
+### T-013: Model Dependency Vulnerabilities
+
+| Attribute | Detail |
+|-----------|--------|
+| **Scenario** | Dependencies in the ML pipeline (PyTorch, transformers, etc.) contain known vulnerabilities. |
+| **Impact** | **Medium-High** — Potential RCE or data exfiltration. |
+| **Likelihood** | Low — Using standard, audited open-source libraries. |
+| **Mitigation** | 1. Dependency vulnerability scanning in CI. 2. Pinned dependency versions. 3. Minimal production image (only runtime dependencies). 4. Regular dependency update schedule. |
+| **Detection** | Automated vulnerability alerts (pip-audit, Dependabot). |
+| **Residual Risk** | Low — Standard software supply chain management. |
+
+---
+
+## 6. Authentication, Authorization & API Threats (Phase 3.5)
+
+### T-014: Broken Authentication & Token Spoofing
+
+| Attribute | Detail |
+|-----------|--------|
+| **Scenario** | An attacker attempts to forge or replay tokens or access protected reconciliation endpoints anonymously. |
+| **Impact** | **High** — Unauthorized access to financial case records, evidence, and audit logs. |
+| **Likelihood** | Medium |
+| **Mitigation** | 1. Strict AuthProvider abstraction verifying cryptographic signatures or bearer tokens. 2. Distinction between Authenticated and Anonymous principals. 3. Integration with enterprise OIDC / OAuth2 in production. |
+| **Detection** | Failed authentication counters logged and monitored via `/metrics`. |
+| **Residual Risk** | Low — Gated by FastAPI dependency injection. |
+
+### T-015: Broken Authorization & Privilege Escalation
+
+| Attribute | Detail |
+|-----------|--------|
+| **Scenario** | A `VIEWER` or unprivileged user attempts to propose or execute financial resolutions, or an `ANALYST` attempts administrative functions. |
+| **Impact** | **High** — Unauthorized financial action proposals and system configuration modification. |
+| **Likelihood** | Medium |
+| **Mitigation** | 1. Deterministic RBAC model (`VIEWER`, `ANALYST`, `APPROVER`, `ADMIN`, `SERVICE`). 2. Granular permissions enforced at the router/dependency level (`case:view`, `evidence:view`, `action:propose`, `action:approve`). 3. Approval role separation (proposers cannot approve their own actions). |
+| **Detection** | 403 Forbidden event tracking in audit log and metrics registry. |
+| **Residual Risk** | Low — Explicit permission checks on all state-modifying endpoints. |
+
+### T-016: API Rate Limit Exhaustion & DoS
+
+| Attribute | Detail |
+|-----------|--------|
+| **Scenario** | Automated scripts spam computationally expensive reconciliation or ingestion endpoints to exhaust server resources. |
+| **Impact** | **Medium** — Service degradation for valid users. |
+| **Likelihood** | Medium |
+| **Mitigation** | 1. Sliding window rate limiter enforcing per-client quotas (e.g. 120 req/min). 2. Returns 429 with `Retry-After` header. 3. Distributed Redis rate limiting in production deployment. |
+| **Detection** | Rate limit violation counters in metrics (`http_errors_total{status=429}`). |
+| **Residual Risk** | Low — Protected by middleware. |
+
+### T-017: Replay Attacks & Idempotency Conflicts
+
+| Attribute | Detail |
+|-----------|--------|
+| **Scenario** | An attacker intercepts and replays a resolution request, or modifies the payload while keeping the same idempotency key. |
+| **Impact** | **Critical** — Duplicate adjustments or corrupt resolution states. |
+| **Likelihood** | Medium |
+| **Mitigation** | 1. Cryptographic request hashing (SHA-256) checked against stored idempotency records. 2. Identical keys with altered payloads trigger explicit `CONFLICT` errors. 3. Atomic lock acquisition before operation dispatch. |
+| **Detection** | Idempotency conflict exceptions logged with actor and payload diff. |
+| **Residual Risk** | Low — Enforced at store level. |
+
+### T-018: Secret & PII Exposure in Logs
+
+| Attribute | Detail |
+|-----------|--------|
+| **Scenario** | Sensitive credentials (passwords, tokens, PAN, credit card numbers) are logged to stdout/disk during errors. |
+| **Impact** | **High** — Credential theft and compliance violation. |
+| **Likelihood** | Medium |
+| **Mitigation** | 1. `RedactingJsonFormatter` recursively scrubs sensitive keys and regex matches. 2. Sanitized error responses prevent stack traces from reaching clients. 3. Automated secret scanner `scripts/scan_secrets.py` enforced in CI. |
+| **Detection** | CI secret scanning and log ingestion pattern alerts. |
+| **Residual Risk** | Low — Layered redaction and static scanning. |
+
+### T-019: Ground-Truth & Evaluation Leakage
+
+| Attribute | Detail |
+|-----------|--------|
+| **Scenario** | Inference logic accesses ground truth annotations (`case.ground_truth`, `corruptions`, `expected_outcome`) during reconciliation, producing circular benchmarks. |
+| **Impact** | **Critical (Scientific & Integrity)** — Invalidated accuracy claims and overfitted model metrics. |
+| **Likelihood** | Low |
+| **Mitigation** | 1. Reconciliation engine accepts ONLY `case.observed` (`CaseRecords`). 2. Static AST scans verify zero forbidden attribute access across all service files. 3. Dynamic canary trap unit tests enforce isolation at runtime. |
+| **Detection** | Automated AST and canary isolation regression test suite in CI. |
+| **Residual Risk** | Zero — Verified statically and dynamically. |
+
+### T-020: Identifier & SQL Injection
+
+| Attribute | Detail |
+|-----------|--------|
+| **Scenario** | Attackers pass SQL injection payloads or path traversal strings into `case_id`, `payment_id`, or `merchant_id`. |
+| **Impact** | **Critical** — Unauthorized database queries or data corruption. |
+| **Likelihood** | Low |
+| **Mitigation** | 1. Strict regex validation on all entity identifiers (`^[a-zA-Z0-9_\-]+$`). 2. Parameterized queries in repository interfaces. |
+| **Detection** | Validation errors logged and rejected at API boundary. |
+| **Residual Risk** | Low — Clean repository boundaries. |
+
+### T-021: Oversized Payloads & Resource Depletion
+
+| Attribute | Detail |
+|-----------|--------|
+| **Scenario** | An attacker uploads a massive 100MB+ JSON payload to exhaust server memory. |
+| **Impact** | **Medium** — Worker process memory exhaustion. |
+| **Likelihood** | Medium |
+| **Mitigation** | 1. `PayloadSizeLimitMiddleware` rejects payloads exceeding 10MB with `413 Payload Too Large`. |
+| **Detection** | 413 HTTP status logs and request size alerts. |
+| **Residual Risk** | Low — Filtered at early middleware stage. |
+
+### T-022: Insecure Container Configuration
+
+| Attribute | Detail |
+|-----------|--------|
+| **Scenario** | Compromised container breakout due to running as `root` user or bloated base image containing package managers/compilers. |
+| **Impact** | **High** — Host compromise. |
+| **Likelihood** | Low |
+| **Mitigation** | 1. Multi-stage Docker build separating compiler tools from runtime image. 2. Dedicated non-root user `finresolve` (UID 10001). 3. Container health check with minimal curl command. |
+| **Detection** | Container security scanning (Trivy/Clair) in deployment pipeline. |
+| **Residual Risk** | Low — Hardened non-root runtime. |
+
 ---
 
 ## Summary Risk Matrix
