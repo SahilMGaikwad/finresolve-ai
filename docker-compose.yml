@@ -1,0 +1,63 @@
+# ============================================
+# FinResolve AI — Docker Compose (Development)
+# ============================================
+# Usage:
+#   docker compose up        # start all services
+#   docker compose up api    # start API only
+#   docker compose down      # stop all services
+# ============================================
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      # Hot-reload: mount source code for development
+      - ./apps:/app/apps
+      - ./services:/app/services
+      - ./ml:/app/ml
+      - ./data:/app/data
+    environment:
+      - APP_ENV=development
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - DATABASE_URL=postgresql://finresolve:finresolve_dev@db:5432/finresolve
+      - POLICY_AUTO_RESOLVE_ENABLED=false
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      uvicorn apps.api.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+    networks:
+      - finresolve-network
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: finresolve
+      POSTGRES_USER: finresolve
+      POSTGRES_PASSWORD: finresolve_dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U finresolve -d finresolve"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - finresolve-network
+
+volumes:
+  postgres_data:
+
+networks:
+  finresolve-network:
+    driver: bridge
