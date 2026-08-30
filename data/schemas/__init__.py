@@ -35,6 +35,17 @@ from data.schemas.evidence import (
     Severity,
 )
 from data.schemas.fee import FeeRecord
+from data.schemas.investigation import (
+    AgentTraceStep,
+    ClaimVerificationStatus,
+    FactualClaim,
+    HumanReviewPackage,
+    InvestigationResult,
+    InvestigationStatus,
+    MultiStepSimulationResult,
+    PlanStep,
+    ResolutionPlan,
+)
 from data.schemas.ledger_entry import LedgerEntry
 from data.schemas.manifest import DatasetManifest
 from data.schemas.matching import (
@@ -69,10 +80,12 @@ from data.schemas.resolution import (
 from data.schemas.settlement import SettlementRecord
 
 __all__ = [
+    "AgentTraceStep",
     "BaseRecord",
     "CanonicalRecord",
     "CaseDifficulty",
     "CaseRecords",
+    "ClaimVerificationStatus",
     "CorruptionLabel",
     "CorruptionType",
     "CounterfactualState",
@@ -83,6 +96,7 @@ __all__ = [
     "EvidenceGraphModel",
     "EvidenceType",
     "ExpectedOutcome",
+    "FactualClaim",
     "FeeRecord",
     "FeeType",
     "FinancialDelta",
@@ -90,6 +104,9 @@ __all__ = [
     "GraphEdgeType",
     "GraphNode",
     "GraphNodeType",
+    "HumanReviewPackage",
+    "InvestigationResult",
+    "InvestigationStatus",
     "LedgerEntry",
     "LedgerEntryType",
     "MatchCandidate",
@@ -97,6 +114,7 @@ __all__ = [
     "MatchSignal",
     "MatchState",
     "Money",
+    "MultiStepSimulationResult",
     "OrderRecord",
     "OrderStatus",
     "PaymentMethod",
@@ -104,6 +122,7 @@ __all__ = [
     "PaymentStatus",
     "PayoutRecord",
     "PayoutStatus",
+    "PlanStep",
     "PolicyDecision",
     "PolicyDecisionType",
     "PolicyRuleEvaluation",
@@ -116,6 +135,7 @@ __all__ = [
     "RefundStatus",
     "ResolutionAction",
     "ResolutionActionType",
+    "ResolutionPlan",
     "ResolutionProposal",
     "RiskLevel",
     "RootCauseHypothesis",
