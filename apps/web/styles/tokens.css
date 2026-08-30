@@ -1,49 +1,67 @@
 :root {
-  /* Backgrounds */
-  --bg-primary: #080c14;
-  --bg-secondary: #0e1626;
-  --bg-card: #131d31;
-  --bg-card-hover: #192640;
-  --bg-input: #0b111e;
+  /* FinResolve Distinctive Light FinTech Palette */
+  --bg-canvas: #f7f9fc;
+  --bg-sidebar: #ffffff;
+  --bg-header: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --bg-surface-hover: #f0f4fe;
+  --bg-surface-sunken: #f8fafc;
+  --bg-input: #ffffff;
+  --bg-pill: #f1f5f9;
+  --bg-pill-active: #ffffff;
 
-  /* Borders */
-  --border-subtle: #1e2d4a;
-  --border-strong: #2c3e66;
-  --border-focus: #3b82f6;
+  /* FinResolve Refined Borders */
+  --border-hairline: rgba(11, 18, 32, 0.04);
+  --border-subtle: #e5eaf2;
+  --border-medium: #cbd5e1;
+  --border-strong: #94a3b8;
+  --border-focus: #315cf5;
 
-  /* Typography Colors */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-accent: #38bdf8;
+  /* Deep Navy Typography */
+  --text-primary: #111827;
+  --text-secondary: #475467;
+  --text-muted: #667085;
+  --text-dim: #98a2b3;
+  --text-accent: #315cf5;
+  --text-accent-hover: #2144d4;
 
-  /* Status Colors */
-  --status-reconciled: #10b981;
-  --status-reconciled-bg: rgba(16, 185, 129, 0.12);
-  --status-reconciled-border: rgba(16, 185, 129, 0.3);
+  /* Distinctive Semantic Colors */
+  --color-indigo: #315cf5;
+  --color-indigo-bg: #eff4ff;
+  --color-indigo-border: #bfdbfe;
 
-  --status-discrepancy: #ef4444;
-  --status-discrepancy-bg: rgba(239, 68, 68, 0.12);
-  --status-discrepancy-border: rgba(239, 68, 68, 0.3);
+  --color-teal: #14b8a6;
+  --color-teal-bg: #f0fdfa;
+  --color-teal-border: #99f6e4;
 
-  --status-review: #f59e0b;
-  --status-review-bg: rgba(245, 158, 11, 0.12);
-  --status-review-border: rgba(245, 158, 11, 0.3);
+  --status-reconciled: #14b8a6;
+  --status-reconciled-bg: #f0fdfa;
+  --status-reconciled-border: #99f6e4;
 
-  --status-blocked: #f43f5e;
-  --status-blocked-bg: rgba(244, 63, 94, 0.12);
-  --status-blocked-border: rgba(244, 63, 94, 0.3);
+  --status-discrepancy: #dc2626;
+  --status-discrepancy-bg: #fef2f2;
+  --status-discrepancy-border: #fecaca;
 
-  --status-info: #6366f1;
-  --status-info-bg: rgba(99, 102, 241, 0.12);
-  --status-info-border: rgba(99, 102, 241, 0.3);
+  --status-review: #d97706;
+  --status-review-bg: #fffbeb;
+  --status-review-border: #fde68a;
 
-  /* Elevation */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --status-blocked: #dc2626;
+  --status-blocked-bg: #fef2f2;
+  --status-blocked-border: #fecaca;
+
+  --status-info: #315cf5;
+  --status-info-bg: #eff4ff;
+  --status-info-border: #bfdbfe;
+
+  /* Premium Micro-Elevations */
+  --shadow-sm: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+  --shadow-card: 0 1px 3px 0 rgba(16, 24, 40, 0.06), 0 1px 2px 0 rgba(16, 24, 40, 0.04);
+  --shadow-hover: 0 4px 12px 0 rgba(49, 92, 245, 0.08), 0 2px 4px 0 rgba(16, 24, 40, 0.03);
+  --shadow-lg: 0 12px 24px -4px rgba(16, 24, 40, 0.08), 0 4px 8px -2px rgba(16, 24, 40, 0.03);
 
   /* Fonts */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
 }

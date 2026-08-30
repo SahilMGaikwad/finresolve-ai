@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AccessibleGraphList } from "./AccessibleGraphList";
+import { formatINR } from "@/lib/formatters";
 
 interface EvidenceGraphCanvasProps {
   graphData: {
@@ -12,83 +13,136 @@ interface EvidenceGraphCanvasProps {
 
 export function EvidenceGraphCanvas({ graphData }: EvidenceGraphCanvasProps) {
   const [selectedNode, setSelectedNode] = useState<any | null>(null);
-  const [isAccessibleView, setIsAccessibleView] = useState(false);
+  const [isTableView, setIsTableView] = useState(false);
 
   const nodes = graphData?.nodes || [];
   const edges = graphData?.edges || [];
 
-  // Layout node positions in concentric/grid slots
+  // Organized layered layout
   const nodePositions = nodes.map((node, i) => {
     const total = nodes.length || 1;
     const angle = (i / total) * 2 * Math.PI - Math.PI / 2;
-    const radius = 180;
-    const cx = 350 + radius * Math.cos(angle);
-    const cy = 240 + radius * Math.sin(angle);
+    const rx = 230;
+    const ry = 150;
+    const cx = 330 + rx * Math.cos(angle);
+    const cy = 210 + ry * Math.sin(angle);
     return { ...node, x: cx, y: cy };
   });
 
   const nodeMap = new Map(nodePositions.map((n) => [n.node_id, n]));
 
+  const getNodeColor = (type: string) => {
+    switch (type) {
+      case "payment": return "#315cf5";
+      case "settlement": return "#14b8a6";
+      case "fee": return "#d97706";
+      case "refund": return "#dc2626";
+      case "ledger_entry": return "#4f46e5";
+      default: return "#64748b";
+    }
+  };
+
   return (
-    <div className="card" style={{ padding: "1.5rem" }}>
+    <div className="surface" style={{ padding: "1.25rem 1.5rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
         <div>
-          <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#fff" }}>
+          <span style={{ fontSize: "16px", fontWeight: 700, color: "#111827" }}>
             Deterministic Evidence Graph
-          </h3>
-          <p style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-            Visualizing verified entity references, double-entry postings, and discrepancy edges.
-          </p>
+          </span>
+          <span style={{ fontSize: "13px", color: "var(--text-muted)", marginLeft: "0.5rem" }}>
+            ({nodes.length} entities, {edges.length} relationships)
+          </span>
         </div>
         <button
-          onClick={() => setIsAccessibleView(!isAccessibleView)}
+          onClick={() => setIsTableView(!isTableView)}
           className="btn-secondary"
-          style={{ fontSize: "0.75rem", padding: "0.35rem 0.75rem" }}
+          style={{ fontSize: "13px", padding: "0.3rem 0.75rem" }}
         >
-          {isAccessibleView ? "Visual Canvas View" : "Accessible Table View"}
+          {isTableView ? "Canvas Mode" : "Table Mode"}
         </button>
       </div>
 
-      {isAccessibleView ? (
+      {isTableView ? (
         <AccessibleGraphList nodes={nodes} edges={edges} />
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "1.5rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 290px", gap: "1rem" }}>
           {/* SVG Canvas */}
           <div style={{
-            backgroundColor: "var(--bg-secondary)",
+            backgroundColor: "#f8fafc",
             borderRadius: "8px",
             border: "1px solid var(--border-subtle)",
             overflow: "hidden",
             display: "flex",
             justifyContent: "center",
           }}>
-            <svg width="700" height="480" viewBox="0 0 700 480" style={{ maxWidth: "100%", height: "auto" }}>
+            <svg width="660" height="420" viewBox="0 0 660 420" style={{ maxWidth: "100%", height: "auto" }}>
+              <defs>
+                <marker
+                  id="arrow-verified"
+                  viewBox="0 0 10 10"
+                  refX="18"
+                  refY="5"
+                  markerWidth="5"
+                  markerHeight="5"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
+                </marker>
+                <marker
+                  id="arrow-conflict"
+                  viewBox="0 0 10 10"
+                  refX="18"
+                  refY="5"
+                  markerWidth="5"
+                  markerHeight="5"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
+                </marker>
+              </defs>
+
               {/* Edges */}
               {edges.map((edge, i) => {
-                const src = nodeMap.get(edge.source_id);
-                const tgt = nodeMap.get(edge.target_id);
+                const srcId = edge.source_node_id || edge.source_id;
+                const tgtId = edge.target_node_id || edge.target_id;
+                const src = nodeMap.get(srcId);
+                const tgt = nodeMap.get(tgtId);
                 if (!src || !tgt) return null;
 
-                const isDiscrepancy = edge.edge_type === "CONFLICTS_WITH" || edge.edge_type === "VIOLATES";
-                const strokeColor = isDiscrepancy ? "#ef4444" : "#38bdf8";
+                const isConflict = edge.edge_type === "CONFLICTS_WITH";
+                const isSelf = srcId === tgtId;
+
+                if (isSelf) {
+                  return (
+                    <path
+                      key={i}
+                      d={`M ${src.x} ${src.y - 10} C ${src.x - 25} ${src.y - 35}, ${src.x + 25} ${src.y - 35}, ${src.x} ${src.y - 10}`}
+                      fill="none"
+                      stroke="#dc2626"
+                      strokeWidth="1.5"
+                      strokeDasharray="3 3"
+                    />
+                  );
+                }
 
                 return (
-                  <g key={`edge-${i}`}>
+                  <g key={i}>
                     <line
                       x1={src.x}
                       y1={src.y}
                       x2={tgt.x}
                       y2={tgt.y}
-                      stroke={strokeColor}
-                      strokeWidth={isDiscrepancy ? 2.5 : 1.5}
-                      strokeDasharray={isDiscrepancy ? "4 4" : undefined}
-                      opacity={0.7}
+                      stroke={isConflict ? "#dc2626" : "#cbd5e1"}
+                      strokeWidth={isConflict ? 1.75 : 1.2}
+                      strokeDasharray={isConflict ? "4 3" : "none"}
+                      markerEnd={isConflict ? "url(#arrow-conflict)" : "url(#arrow-verified)"}
                     />
                     <text
                       x={(src.x + tgt.x) / 2}
                       y={(src.y + tgt.y) / 2 - 4}
-                      fill="var(--text-muted)"
+                      fill={isConflict ? "#dc2626" : "#64748b"}
                       fontSize="9"
+                      fontWeight="600"
                       fontFamily="var(--font-mono)"
                       textAnchor="middle"
                     >
@@ -98,51 +152,46 @@ export function EvidenceGraphCanvas({ graphData }: EvidenceGraphCanvasProps) {
                 );
               })}
 
-              {/* Nodes */}
+              {/* Nodes with Hover Scale */}
               {nodePositions.map((node) => {
                 const isSelected = selectedNode?.node_id === node.node_id;
-                let fill = "#1e293b";
-                let stroke = "#38bdf8";
-
-                if (node.node_type === "payment") { stroke = "#10b981"; fill = "rgba(16, 185, 129, 0.2)"; }
-                if (node.node_type === "settlement") { stroke = "#3b82f6"; fill = "rgba(59, 130, 246, 0.2)"; }
-                if (node.node_type === "fee") { stroke = "#f59e0b"; fill = "rgba(245, 158, 11, 0.2)"; }
-                if (node.node_type === "ledger_entry") { stroke = "#6366f1"; fill = "rgba(99, 102, 241, 0.2)"; }
+                const color = getNodeColor(node.node_type);
 
                 return (
                   <g
                     key={node.node_id}
                     onClick={() => setSelectedNode(node)}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", transition: "transform 0.15s ease" }}
                   >
+                    {isSelected && (
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r="17"
+                        fill="none"
+                        stroke="#315cf5"
+                        strokeWidth="2"
+                        strokeDasharray="3 2"
+                      />
+                    )}
                     <circle
                       cx={node.x}
                       cy={node.y}
-                      r={isSelected ? 26 : 22}
-                      fill={fill}
-                      stroke={isSelected ? "#fff" : stroke}
-                      strokeWidth={isSelected ? 3 : 2}
+                      r="11"
+                      fill="#ffffff"
+                      stroke={color}
+                      strokeWidth="2.5"
                     />
                     <text
                       x={node.x}
-                      y={node.y + 4}
-                      fill="#fff"
+                      y={node.y + 22}
+                      fill="#111827"
                       fontSize="10"
                       fontWeight="600"
                       fontFamily="var(--font-mono)"
                       textAnchor="middle"
                     >
-                      {node.node_type?.slice(0, 3).toUpperCase()}
-                    </text>
-                    <text
-                      x={node.x}
-                      y={node.y + 36}
-                      fill="var(--text-secondary)"
-                      fontSize="9"
-                      fontFamily="var(--font-mono)"
-                      textAnchor="middle"
-                    >
-                      {node.node_id?.length > 14 ? `${node.node_id.slice(0, 12)}...` : node.node_id}
+                      {node.label || node.node_id}
                     </text>
                   </g>
                 );
@@ -150,43 +199,81 @@ export function EvidenceGraphCanvas({ graphData }: EvidenceGraphCanvasProps) {
             </svg>
           </div>
 
-          {/* Node Inspector Drawer */}
+          {/* Node Inspector Panel */}
           <div style={{
-            backgroundColor: "var(--bg-secondary)",
+            background: "#f8fafc",
             borderRadius: "8px",
             border: "1px solid var(--border-subtle)",
             padding: "1rem",
             display: "flex",
             flexDirection: "column",
           }}>
-            <h4 style={{ fontSize: "0.85rem", fontWeight: 600, color: "#fff", marginBottom: "0.75rem" }}>
-              Node Inspector
-            </h4>
+            <div style={{
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "var(--text-muted)",
+              textTransform: "uppercase",
+              letterSpacing: "0.04em",
+              marginBottom: "0.75rem",
+              borderBottom: "1px solid var(--border-subtle)",
+              paddingBottom: "0.4rem",
+            }}>
+              Node Properties
+            </div>
+
             {selectedNode ? (
-              <div style={{ fontSize: "0.8rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 <div>
-                  <span style={{ color: "var(--text-muted)" }}>Entity ID:</span>
-                  <div className="mono" style={{ color: "var(--text-accent)", wordBreak: "break-all" }}>
+                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Record ID</div>
+                  <div className="mono" style={{ fontSize: "13px", fontWeight: 600, color: "#111827", wordBreak: "break-all" }}>
                     {selectedNode.node_id}
                   </div>
                 </div>
+
                 <div>
-                  <span style={{ color: "var(--text-muted)" }}>Type:</span>
-                  <div style={{ fontWeight: 600, color: "#fff" }}>
-                    {selectedNode.node_type?.toUpperCase()}
-                  </div>
+                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Type</div>
+                  <span className="badge badge-info" style={{ marginTop: "0.2rem", textTransform: "capitalize" }}>
+                    {selectedNode.node_type}
+                  </span>
                 </div>
-                <div>
-                  <span style={{ color: "var(--text-muted)" }}>Connected Edges:</span>
-                  <div className="mono" style={{ color: "#fff" }}>
-                    {edges.filter((e) => e.source_id === selectedNode.node_id || e.target_id === selectedNode.node_id).length} edges
+
+                {selectedNode.attributes?.amount && (
+                  <div>
+                    <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Amount</div>
+                    <div className="tabular-num" style={{ fontSize: "16px", fontWeight: 700, color: "#059669" }}>
+                      {formatINR(selectedNode.attributes.amount.amount_minor || selectedNode.attributes.amount)}
+                    </div>
                   </div>
+                )}
+
+                {selectedNode.attributes?.net_amount && (
+                  <div>
+                    <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Net Settled</div>
+                    <div className="tabular-num" style={{ fontSize: "16px", fontWeight: 700, color: "#315cf5" }}>
+                      {formatINR(selectedNode.attributes.net_amount.amount_minor || selectedNode.attributes.net_amount)}
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <div style={{ fontSize: "11px", color: "var(--text-muted)", marginBottom: "0.25rem" }}>Payload Fields</div>
+                  <pre className="mono" style={{
+                    fontSize: "12px",
+                    background: "#ffffff",
+                    padding: "0.6rem",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border-subtle)",
+                    overflowX: "auto",
+                    color: "var(--text-secondary)",
+                  }}>
+                    {JSON.stringify(selectedNode.attributes || {}, null, 2)}
+                  </pre>
                 </div>
               </div>
             ) : (
-              <p style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                Click any graph node to inspect entity references and relation paths.
-              </p>
+              <div style={{ textAlign: "center", padding: "3rem 0.5rem", color: "var(--text-muted)", fontSize: "13.5px" }}>
+                Select any entity node on the canvas to inspect payload attributes.
+              </div>
             )}
           </div>
         </div>

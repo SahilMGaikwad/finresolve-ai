@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { formatDateTime, formatINR } from "@/lib/formatters";
-import { DiscrepancyBadge } from "./DiscrepancyBadge";
 
 interface RecordsInspectorProps {
   observed: {
@@ -17,38 +16,43 @@ interface RecordsInspectorProps {
 
 export function RecordsInspector({ observed }: RecordsInspectorProps) {
   const [activeTab, setActiveTab] = useState<"payments" | "settlements" | "fees" | "refunds" | "ledger">("payments");
+  const [selectedRawRecord, setSelectedRawRecord] = useState<any | null>(null);
 
   const tabs = [
     { id: "payments", label: `Payments (${observed.payments?.length || 0})` },
     { id: "settlements", label: `Settlements (${observed.settlements?.length || 0})` },
     { id: "fees", label: `Fees (${observed.fees?.length || 0})` },
     { id: "refunds", label: `Refunds (${observed.refunds?.length || 0})` },
-    { id: "ledger", label: `Double-Entry Ledger (${observed.ledger_entries?.length || 0})` },
+    { id: "ledger", label: `General Ledger (${observed.ledger_entries?.length || 0})` },
   ];
 
   return (
-    <div className="card" style={{ padding: "0" }}>
-      {/* Tab Navigation */}
+    <div className="surface" style={{ overflow: "hidden" }}>
+      {/* Sub-Tabs */}
       <div style={{
         display: "flex",
         borderBottom: "1px solid var(--border-subtle)",
-        backgroundColor: "var(--bg-secondary)",
-        borderTopLeftRadius: "8px",
-        borderTopRightRadius: "8px",
+        backgroundColor: "#f8fafc",
+        overflowX: "auto",
       }}>
         {tabs.map((t) => {
           const isActive = activeTab === t.id;
           return (
             <button
               key={t.id}
-              onClick={() => setActiveTab(t.id as any)}
+              onClick={() => {
+                setActiveTab(t.id as any);
+                setSelectedRawRecord(null);
+              }}
               style={{
-                padding: "0.85rem 1.25rem",
-                fontSize: "0.85rem",
-                fontWeight: isActive ? 600 : 400,
-                color: isActive ? "#ffffff" : "var(--text-muted)",
-                borderBottom: isActive ? "2px solid #3b82f6" : "2px solid transparent",
-                backgroundColor: isActive ? "var(--bg-card)" : "transparent",
+                padding: "0.65rem 1.15rem",
+                fontSize: "0.78rem",
+                fontWeight: isActive ? 700 : 500,
+                color: isActive ? "#2563eb" : "var(--text-muted)",
+                borderBottom: isActive ? "2px solid #2563eb" : "2px solid transparent",
+                backgroundColor: isActive ? "#ffffff" : "transparent",
+                whiteSpace: "nowrap",
+                transition: "all 0.12s ease",
               }}
             >
               {t.label}
@@ -57,36 +61,49 @@ export function RecordsInspector({ observed }: RecordsInspectorProps) {
         })}
       </div>
 
-      {/* Tab Content */}
+      {/* Main Table */}
       <div style={{ overflowX: "auto" }}>
         {activeTab === "payments" && (
           <table className="data-table">
             <thead>
               <tr>
                 <th>Payment ID</th>
-                <th>Order ID</th>
+                <th>Order Ref</th>
+                <th>Amount</th>
                 <th>Method</th>
                 <th>Status</th>
                 <th>Captured At</th>
-                <th style={{ textAlign: "right" }}>Amount</th>
+                <th style={{ textAlign: "right" }}>Raw</th>
               </tr>
             </thead>
             <tbody>
-              {observed.payments?.map((p) => (
+              {observed.payments?.map((p: any) => (
                 <tr key={p.payment_id}>
-                  <td className="mono" style={{ color: "var(--text-accent)" }}>{p.payment_id}</td>
-                  <td className="mono">{p.order_id || "—"}</td>
-                  <td>{p.method}</td>
-                  <td><DiscrepancyBadge status={p.status} /></td>
-                  <td className="mono">{formatDateTime(p.captured_at)}</td>
-                  <td className="mono" style={{ textAlign: "right", fontWeight: 600, color: "#fff" }}>
-                    {formatINR(p.amount?.amount_minor)}
+                  <td className="mono" style={{ fontWeight: 700, color: "#0f172a" }}>{p.payment_id}</td>
+                  <td className="mono" style={{ color: "var(--text-secondary)" }}>{p.order_id}</td>
+                  <td className="mono" style={{ fontWeight: 800, color: "#0f172a" }}>
+                    {formatINR(p.amount?.amount_minor || 0)}
+                  </td>
+                  <td>
+                    <span className="badge badge-info" style={{ fontSize: "0.62rem" }}>{p.method}</span>
+                  </td>
+                  <td>
+                    <span className="badge badge-reconciled" style={{ fontSize: "0.62rem" }}>{p.status}</span>
+                  </td>
+                  <td className="mono" style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                    {formatDateTime(p.captured_at)}
+                  </td>
+                  <td style={{ textAlign: "right" }}>
+                    <button
+                      onClick={() => setSelectedRawRecord(p)}
+                      className="btn-secondary"
+                      style={{ fontSize: "0.65rem", padding: "0.15rem 0.4rem" }}
+                    >
+                      JSON
+                    </button>
                   </td>
                 </tr>
               ))}
-              {(!observed.payments || observed.payments.length === 0) && (
-                <tr><td colSpan={6} style={{ textAlign: "center", color: "var(--text-muted)" }}>No payment records found</td></tr>
-              )}
             </tbody>
           </table>
         )}
@@ -96,35 +113,42 @@ export function RecordsInspector({ observed }: RecordsInspectorProps) {
             <thead>
               <tr>
                 <th>Settlement ID</th>
-                <th>Payment ID</th>
-                <th>UTR</th>
+                <th>Payment Ref</th>
+                <th>Gross</th>
+                <th>Fee</th>
+                <th>Net Settled</th>
                 <th>Status</th>
-                <th>Settled At</th>
-                <th style={{ textAlign: "right" }}>Gross</th>
-                <th style={{ textAlign: "right" }}>Fee</th>
-                <th style={{ textAlign: "right" }}>Net Amount</th>
+                <th>UTR Reference</th>
+                <th style={{ textAlign: "right" }}>Raw</th>
               </tr>
             </thead>
             <tbody>
-              {observed.settlements?.map((s) => (
+              {observed.settlements?.map((s: any) => (
                 <tr key={s.settlement_id}>
-                  <td className="mono" style={{ color: "var(--text-accent)" }}>{s.settlement_id}</td>
-                  <td className="mono">{s.payment_id}</td>
-                  <td className="mono">{s.utr || "—"}</td>
-                  <td><DiscrepancyBadge status={s.status} /></td>
-                  <td className="mono">{formatDateTime(s.settled_at)}</td>
-                  <td className="mono" style={{ textAlign: "right" }}>{formatINR(s.gross_amount?.amount_minor)}</td>
-                  <td className="mono" style={{ textAlign: "right", color: "var(--status-discrepancy)" }}>
-                    -{formatINR(s.fee_amount?.amount_minor)}
+                  <td className="mono" style={{ fontWeight: 700, color: "#0f172a" }}>{s.settlement_id}</td>
+                  <td className="mono" style={{ color: "var(--text-secondary)" }}>{s.payment_id}</td>
+                  <td className="mono">{formatINR(s.gross_amount?.amount_minor || 0)}</td>
+                  <td className="mono" style={{ color: "var(--status-discrepancy)" }}>
+                    -{formatINR(s.fee_amount?.amount_minor || 0)}
                   </td>
-                  <td className="mono" style={{ textAlign: "right", fontWeight: 600, color: "var(--status-reconciled)" }}>
-                    {formatINR(s.net_amount?.amount_minor)}
+                  <td className="mono" style={{ fontWeight: 800, color: "var(--status-reconciled)" }}>
+                    {formatINR(s.net_amount?.amount_minor || 0)}
+                  </td>
+                  <td>
+                    <span className="badge badge-reconciled" style={{ fontSize: "0.62rem" }}>{s.status}</span>
+                  </td>
+                  <td className="mono" style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>{s.utr}</td>
+                  <td style={{ textAlign: "right" }}>
+                    <button
+                      onClick={() => setSelectedRawRecord(s)}
+                      className="btn-secondary"
+                      style={{ fontSize: "0.65rem", padding: "0.15rem 0.4rem" }}
+                    >
+                      JSON
+                    </button>
                   </td>
                 </tr>
               ))}
-              {(!observed.settlements || observed.settlements.length === 0) && (
-                <tr><td colSpan={8} style={{ textAlign: "center", color: "var(--text-muted)" }}>No settlement records found</td></tr>
-              )}
             </tbody>
           </table>
         )}
@@ -134,27 +158,40 @@ export function RecordsInspector({ observed }: RecordsInspectorProps) {
             <thead>
               <tr>
                 <th>Fee ID</th>
-                <th>Fee Type</th>
-                <th>Rate (bps)</th>
-                <th>Applied At</th>
-                <th style={{ textAlign: "right" }}>Fee Amount</th>
+                <th>Type</th>
+                <th>Payment Ref</th>
+                <th>Fee Rate</th>
+                <th>Fee Amount</th>
+                <th>Applied Timestamp</th>
+                <th style={{ textAlign: "right" }}>Raw</th>
               </tr>
             </thead>
             <tbody>
-              {observed.fees?.map((f) => (
+              {observed.fees?.map((f: any) => (
                 <tr key={f.fee_id}>
-                  <td className="mono" style={{ color: "var(--text-accent)" }}>{f.fee_id}</td>
-                  <td>{f.fee_type?.replace(/_/g, " ").toUpperCase()}</td>
-                  <td className="mono">{f.rate_bps} bps</td>
-                  <td className="mono">{formatDateTime(f.applied_at)}</td>
-                  <td className="mono" style={{ textAlign: "right", fontWeight: 600, color: "#fff" }}>
-                    {formatINR(f.amount?.amount_minor)}
+                  <td className="mono" style={{ fontWeight: 700, color: "#0f172a" }}>{f.fee_id}</td>
+                  <td>
+                    <span className="badge badge-info" style={{ fontSize: "0.62rem" }}>{f.fee_type}</span>
+                  </td>
+                  <td className="mono" style={{ color: "var(--text-secondary)" }}>{f.payment_id}</td>
+                  <td className="mono">{(f.rate_bps / 100).toFixed(2)}% ({f.rate_bps} bps)</td>
+                  <td className="mono" style={{ fontWeight: 800, color: "#0f172a" }}>
+                    {formatINR(f.amount?.amount_minor || 0)}
+                  </td>
+                  <td className="mono" style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                    {formatDateTime(f.applied_at)}
+                  </td>
+                  <td style={{ textAlign: "right" }}>
+                    <button
+                      onClick={() => setSelectedRawRecord(f)}
+                      className="btn-secondary"
+                      style={{ fontSize: "0.65rem", padding: "0.15rem 0.4rem" }}
+                    >
+                      JSON
+                    </button>
                   </td>
                 </tr>
               ))}
-              {(!observed.fees || observed.fees.length === 0) && (
-                <tr><td colSpan={5} style={{ textAlign: "center", color: "var(--text-muted)" }}>No fee records found</td></tr>
-              )}
             </tbody>
           </table>
         )}
@@ -164,26 +201,43 @@ export function RecordsInspector({ observed }: RecordsInspectorProps) {
             <thead>
               <tr>
                 <th>Refund ID</th>
+                <th>Payment Ref</th>
+                <th>Refund Amount</th>
                 <th>Reason</th>
                 <th>Status</th>
-                <th>Processed At</th>
-                <th style={{ textAlign: "right" }}>Refund Amount</th>
+                <th style={{ textAlign: "right" }}>Raw</th>
               </tr>
             </thead>
             <tbody>
-              {observed.refunds?.map((r) => (
-                <tr key={r.refund_id}>
-                  <td className="mono" style={{ color: "var(--text-accent)" }}>{r.refund_id}</td>
-                  <td>{r.reason}</td>
-                  <td><DiscrepancyBadge status={r.status} /></td>
-                  <td className="mono">{formatDateTime(r.processed_at)}</td>
-                  <td className="mono" style={{ textAlign: "right", fontWeight: 600, color: "var(--status-review)" }}>
-                    {formatINR(r.amount?.amount_minor)}
+              {(!observed.refunds || observed.refunds.length === 0) ? (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
+                    No refund entries for this case.
                   </td>
                 </tr>
-              ))}
-              {(!observed.refunds || observed.refunds.length === 0) && (
-                <tr><td colSpan={5} style={{ textAlign: "center", color: "var(--text-muted)" }}>No refund records found</td></tr>
+              ) : (
+                observed.refunds.map((r: any) => (
+                  <tr key={r.refund_id}>
+                    <td className="mono" style={{ fontWeight: 700, color: "#0f172a" }}>{r.refund_id}</td>
+                    <td className="mono">{r.payment_id}</td>
+                    <td className="mono" style={{ color: "var(--status-discrepancy)", fontWeight: 800 }}>
+                      -{formatINR(r.amount?.amount_minor || 0)}
+                    </td>
+                    <td>{r.reason || "Customer Return"}</td>
+                    <td>
+                      <span className="badge badge-review" style={{ fontSize: "0.62rem" }}>{r.status}</span>
+                    </td>
+                    <td style={{ textAlign: "right" }}>
+                      <button
+                        onClick={() => setSelectedRawRecord(r)}
+                        className="btn-secondary"
+                        style={{ fontSize: "0.65rem", padding: "0.15rem 0.4rem" }}
+                      >
+                        JSON
+                      </button>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
@@ -193,40 +247,86 @@ export function RecordsInspector({ observed }: RecordsInspectorProps) {
           <table className="data-table">
             <thead>
               <tr>
+                <th>Timestamp</th>
                 <th>Entry ID</th>
                 <th>Reference ID</th>
-                <th>Type</th>
-                <th>Posted At</th>
-                <th style={{ textAlign: "right" }}>Debit</th>
-                <th style={{ textAlign: "right" }}>Credit</th>
-                <th style={{ textAlign: "right" }}>Running Balance</th>
+                <th>Account Type</th>
+                <th>Debit (Dr)</th>
+                <th>Credit (Cr)</th>
+                <th>Balance</th>
+                <th style={{ textAlign: "right" }}>Raw</th>
               </tr>
             </thead>
             <tbody>
-              {observed.ledger_entries?.map((l) => (
+              {observed.ledger_entries?.map((l: any) => (
                 <tr key={l.entry_id}>
-                  <td className="mono" style={{ color: "var(--text-accent)" }}>{l.entry_id}</td>
-                  <td className="mono">{l.reference_id}</td>
-                  <td className="mono"><DiscrepancyBadge status={l.entry_type} /></td>
-                  <td className="mono">{formatDateTime(l.posted_at)}</td>
-                  <td className="mono" style={{ textAlign: "right", color: l.debit?.amount_minor > 0 ? "#fff" : "var(--text-muted)" }}>
-                    {l.debit?.amount_minor > 0 ? formatINR(l.debit?.amount_minor) : "—"}
+                  <td className="mono" style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                    {formatDateTime(l.posted_at)}
                   </td>
-                  <td className="mono" style={{ textAlign: "right", color: l.credit?.amount_minor > 0 ? "#fff" : "var(--text-muted)" }}>
-                    {l.credit?.amount_minor > 0 ? formatINR(l.credit?.amount_minor) : "—"}
+                  <td className="mono" style={{ fontWeight: 700, color: "#0f172a" }}>{l.entry_id}</td>
+                  <td className="mono" style={{ color: "var(--text-secondary)" }}>{l.reference_id}</td>
+                  <td>
+                    <span className={`badge badge-${l.entry_type === "credit" ? "reconciled" : "info"}`} style={{ fontSize: "0.62rem" }}>
+                      {l.entry_type}
+                    </span>
                   </td>
-                  <td className="mono" style={{ textAlign: "right", fontWeight: 600, color: "var(--status-info)" }}>
-                    {formatINR(l.balance_after?.amount_minor)}
+                  <td className="mono" style={{ color: l.debit?.amount_minor > 0 ? "var(--status-discrepancy)" : "var(--text-muted)" }}>
+                    {l.debit?.amount_minor > 0 ? formatINR(l.debit.amount_minor) : "—"}
+                  </td>
+                  <td className="mono" style={{ color: l.credit?.amount_minor > 0 ? "var(--status-reconciled)" : "var(--text-muted)", fontWeight: 700 }}>
+                    {l.credit?.amount_minor > 0 ? formatINR(l.credit.amount_minor) : "—"}
+                  </td>
+                  <td className="mono" style={{ fontWeight: 800, color: "#0f172a" }}>
+                    {formatINR(l.balance_after?.amount_minor || 0)}
+                  </td>
+                  <td style={{ textAlign: "right" }}>
+                    <button
+                      onClick={() => setSelectedRawRecord(l)}
+                      className="btn-secondary"
+                      style={{ fontSize: "0.65rem", padding: "0.15rem 0.4rem" }}
+                    >
+                      JSON
+                    </button>
                   </td>
                 </tr>
               ))}
-              {(!observed.ledger_entries || observed.ledger_entries.length === 0) && (
-                <tr><td colSpan={7} style={{ textAlign: "center", color: "var(--text-muted)" }}>No ledger entries found</td></tr>
-              )}
             </tbody>
           </table>
         )}
       </div>
+
+      {/* Raw Record JSON Drawer */}
+      {selectedRawRecord && (
+        <div style={{
+          padding: "0.85rem 1.15rem",
+          background: "#f8fafc",
+          borderTop: "1px solid var(--border-subtle)",
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
+            <span className="mono" style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: 700 }}>
+              RECORD JSON PAYLOAD
+            </span>
+            <button
+              onClick={() => setSelectedRawRecord(null)}
+              className="btn-secondary"
+              style={{ fontSize: "0.65rem", padding: "0.15rem 0.35rem" }}
+            >
+              Close
+            </button>
+          </div>
+          <pre className="mono" style={{
+            background: "#ffffff",
+            padding: "0.75rem",
+            borderRadius: "6px",
+            fontSize: "0.72rem",
+            color: "var(--text-primary)",
+            overflowX: "auto",
+            border: "1px solid var(--border-subtle)",
+          }}>
+            {JSON.stringify(selectedRawRecord, null, 2)}
+          </pre>
+        </div>
+      )}
     </div>
   );
 }
