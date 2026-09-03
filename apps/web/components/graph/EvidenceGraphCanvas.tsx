@@ -27,9 +27,9 @@ export function EvidenceGraphCanvas({ graphData, graph }: EvidenceGraphCanvasPro
     const total = nodes.length || 1;
     const angle = (i / total) * 2 * Math.PI - Math.PI / 2;
     const rx = 230;
-    const ry = 140;
+    const ry = 135;
     const cx = 330 + rx * Math.cos(angle);
-    const cy = 200 + ry * Math.sin(angle);
+    const cy = 195 + ry * Math.sin(angle);
     return { ...node, x: cx, y: cy };
   });
 
@@ -37,8 +37,8 @@ export function EvidenceGraphCanvas({ graphData, graph }: EvidenceGraphCanvasPro
 
   const getNodeColor = (type: string) => {
     switch (type) {
-      case "payment": return "var(--color-indigo)";
-      case "settlement": return "var(--color-teal)";
+      case "payment": return "var(--text-primary)";
+      case "settlement": return "var(--color-brand)";
       case "fee": return "var(--status-review)";
       case "refund": return "var(--status-discrepancy)";
       case "ledger_entry": return "var(--text-secondary)";
@@ -47,22 +47,32 @@ export function EvidenceGraphCanvas({ graphData, graph }: EvidenceGraphCanvasPro
   };
 
   return (
-    <div className="surface" style={{ padding: "1.25rem 1.5rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+    <div style={{
+      backgroundColor: "var(--bg-surface)",
+      border: "1px solid var(--border-subtle)",
+      padding: "1.75rem",
+      display: "flex",
+      flexDirection: "column",
+      gap: "1.25rem",
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
         <div>
-          <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-primary)" }}>
-            Deterministic Evidence Graph
-          </span>
-          <span style={{ fontSize: "12px", color: "var(--text-muted)", marginLeft: "0.5rem" }}>
-            ({nodes.length} entities, {edges.length} relationships)
-          </span>
+          <div style={{ fontSize: "10.5px", fontWeight: 700, color: "var(--color-brand)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            GROUND-TRUTH ISOLATION
+          </div>
+          <h2 className="heading-editorial title-large" style={{ marginTop: "2px" }}>
+            EVIDENCE GRAPH
+          </h2>
+          <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+            {nodes.length} OBSERVABLE ENTITIES • {edges.length} CAUSAL RELATIONSHIPS
+          </div>
         </div>
+
         <button
           onClick={() => setIsTableView(!isTableView)}
           className="btn btn-secondary btn-sm"
-          style={{ fontSize: "11.5px" }}
         >
-          {isTableView ? "Canvas Mode" : "Table Mode"}
+          {isTableView ? "CANVAS MODE" : "TABLE MODE"}
         </button>
       </div>
 
@@ -71,23 +81,23 @@ export function EvidenceGraphCanvas({ graphData, graph }: EvidenceGraphCanvasPro
           <table className="data-table">
             <thead>
               <tr>
-                <th>Entity Node ID</th>
-                <th>Type</th>
-                <th>Label</th>
-                <th>Key Attributes</th>
+                <th>NODE ID</th>
+                <th>TYPE</th>
+                <th>LABEL</th>
+                <th>ATTRIBUTES</th>
               </tr>
             </thead>
             <tbody>
               {nodes.map((node) => (
                 <tr key={node.node_id}>
-                  <td className="mono" style={{ fontWeight: 600, color: "var(--text-primary)" }}>{node.node_id}</td>
+                  <td className="mono" style={{ fontWeight: 700, color: "var(--text-primary)" }}>{node.node_id}</td>
                   <td>
-                    <span className="badge badge-neutral" style={{ fontSize: "10px", textTransform: "uppercase" }}>
+                    <span className="mono" style={{ fontSize: "10.5px", textTransform: "uppercase" }}>
                       {node.node_type}
                     </span>
                   </td>
                   <td style={{ color: "var(--text-secondary)" }}>{node.label}</td>
-                  <td className="mono" style={{ fontSize: "11.5px", color: "var(--text-muted)" }}>
+                  <td className="mono" style={{ fontSize: "11px", color: "var(--text-muted)" }}>
                     {JSON.stringify(node.attributes || {})}
                   </td>
                 </tr>
@@ -96,17 +106,16 @@ export function EvidenceGraphCanvas({ graphData, graph }: EvidenceGraphCanvasPro
           </table>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "1rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "1.25rem" }}>
           {/* SVG Canvas */}
           <div style={{
             backgroundColor: "var(--bg-canvas)",
-            borderRadius: "6px",
             border: "1px solid var(--border-subtle)",
             overflow: "hidden",
             display: "flex",
             justifyContent: "center",
           }}>
-            <svg width="660" height="400" viewBox="0 0 660 400" style={{ maxWidth: "100%", height: "auto" }}>
+            <svg width="660" height="390" viewBox="0 0 660 390" style={{ maxWidth: "100%", height: "auto" }}>
               <defs>
                 <marker
                   id="arrow-verified"
@@ -128,7 +137,7 @@ export function EvidenceGraphCanvas({ graphData, graph }: EvidenceGraphCanvasPro
                   markerHeight="5"
                   orient="auto-start-reverse"
                 >
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--status-discrepancy)" />
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-brand)" />
                 </marker>
               </defs>
 
@@ -145,16 +154,16 @@ export function EvidenceGraphCanvas({ graphData, graph }: EvidenceGraphCanvasPro
                       y1={source.y}
                       x2={target.x}
                       y2={target.y}
-                      stroke={isConflict ? "var(--status-discrepancy)" : "var(--border-medium)"}
-                      strokeWidth={isConflict ? "2" : "1.2"}
-                      strokeDasharray={isConflict ? "4,4" : undefined}
+                      stroke={isConflict ? "var(--color-brand)" : "var(--border-subtle)"}
+                      strokeWidth={isConflict ? "1.5" : "1"}
+                      strokeDasharray={isConflict ? "3,3" : undefined}
                       markerEnd={isConflict ? "url(#arrow-conflict)" : "url(#arrow-verified)"}
                     />
                     <text
                       x={(source.x + target.x) / 2}
                       y={(source.y + target.y) / 2 - 4}
-                      fill="var(--text-muted)"
-                      fontSize="9.5"
+                      fill="var(--text-dim)"
+                      fontSize="9"
                       fontFamily="var(--font-mono)"
                       textAnchor="middle"
                     >
@@ -177,16 +186,16 @@ export function EvidenceGraphCanvas({ graphData, graph }: EvidenceGraphCanvasPro
                     <circle
                       cx={node.x}
                       cy={node.y}
-                      r="16"
+                      r="15"
                       fill="var(--bg-surface-secondary)"
-                      stroke={isSelected ? "#ffffff" : color}
-                      strokeWidth={isSelected ? "2.5" : "1.5"}
+                      stroke={isSelected ? "var(--color-brand)" : "var(--border-medium)"}
+                      strokeWidth={isSelected ? "2" : "1"}
                     />
                     <text
                       x={node.x}
                       y={node.y + 3}
                       fill={color}
-                      fontSize="9"
+                      fontSize="8.5"
                       fontWeight="700"
                       fontFamily="var(--font-mono)"
                       textAnchor="middle"
@@ -195,10 +204,10 @@ export function EvidenceGraphCanvas({ graphData, graph }: EvidenceGraphCanvasPro
                     </text>
                     <text
                       x={node.x}
-                      y={node.y + 26}
+                      y={node.y + 25}
                       fill="var(--text-primary)"
-                      fontSize="10"
-                      fontWeight="500"
+                      fontSize="9.5"
+                      fontWeight="600"
                       textAnchor="middle"
                     >
                       {node.label || node.node_id.slice(0, 12)}
@@ -212,38 +221,36 @@ export function EvidenceGraphCanvas({ graphData, graph }: EvidenceGraphCanvasPro
           {/* Node Inspector Sidebar */}
           <div style={{
             backgroundColor: "var(--bg-surface-secondary)",
-            borderRadius: "6px",
             border: "1px solid var(--border-subtle)",
-            padding: "1rem",
+            padding: "1.25rem",
             display: "flex",
             flexDirection: "column",
-            gap: "0.6rem",
+            gap: "0.75rem",
           }}>
-            <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" }}>
-              Entity Inspector
+            <div style={{ fontSize: "10.5px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              ENTITY ATTRIBUTES
             </div>
             {selectedNode ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
                 <div>
-                  <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>Node ID</div>
-                  <div className="mono" style={{ fontSize: "11.5px", fontWeight: 600, color: "var(--text-primary)", wordBreak: "break-all" }}>
+                  <div style={{ fontSize: "9.5px", color: "var(--text-muted)", textTransform: "uppercase" }}>Node Identifier</div>
+                  <div className="mono" style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-primary)", wordBreak: "break-all", marginTop: "2px" }}>
                     {selectedNode.node_id}
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>Type</div>
-                  <span className="badge badge-info" style={{ fontSize: "10px", textTransform: "uppercase", marginTop: "2px" }}>
-                    {selectedNode.node_type}
-                  </span>
+                  <div style={{ fontSize: "9.5px", color: "var(--text-muted)", textTransform: "uppercase" }}>Type</div>
+                  <div className="mono" style={{ fontSize: "11px", color: "var(--color-brand)", fontWeight: 700, marginTop: "2px" }}>
+                    {selectedNode.node_type?.toUpperCase()}
+                  </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>Attributes</div>
+                  <div style={{ fontSize: "9.5px", color: "var(--text-muted)", textTransform: "uppercase" }}>Raw Attributes</div>
                   <pre style={{
                     marginTop: "4px",
                     backgroundColor: "var(--bg-canvas)",
-                    padding: "0.5rem",
-                    borderRadius: "4px",
-                    fontSize: "10.5px",
+                    padding: "0.6rem",
+                    fontSize: "10px",
                     fontFamily: "var(--font-mono)",
                     color: "var(--text-secondary)",
                     overflowX: "auto",
@@ -255,7 +262,7 @@ export function EvidenceGraphCanvas({ graphData, graph }: EvidenceGraphCanvasPro
               </div>
             ) : (
               <div style={{ color: "var(--text-muted)", fontSize: "11.5px", marginTop: "1rem", textAlign: "center" }}>
-                Click any node on the canvas to inspect entity attributes and relationship edges.
+                Select any entity node to inspect ground-truth attributes and causal relationships.
               </div>
             )}
           </div>

@@ -17,7 +17,7 @@ export function Header({ title, subtitle, breadcrumbs, actions }: HeaderProps) {
   return (
     <>
       <header style={{
-        height: "52px",
+        height: "48px",
         backgroundColor: "var(--bg-header)",
         borderBottom: "1px solid var(--border-subtle)",
         padding: "0 2rem",
@@ -28,30 +28,30 @@ export function Header({ title, subtitle, breadcrumbs, actions }: HeaderProps) {
         top: 0,
         zIndex: 20,
       }}>
-        {/* Left: Breadcrumbs / Title */}
+        {/* Left: Breadcrumbs */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           {breadcrumbs ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", fontSize: "13px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>
               {breadcrumbs.map((b, i) => (
                 <span key={i} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
-                  {i > 0 && <span style={{ color: "var(--text-dim)" }}>/</span>}
+                  {i > 0 && <span style={{ color: "var(--color-brand)" }}>/</span>}
                   {b.href ? (
-                    <a href={b.href} style={{ color: "var(--text-secondary)", textDecoration: "none", fontWeight: 500 }}>
+                    <a href={b.href} style={{ color: "var(--text-muted)", textDecoration: "none" }}>
                       {b.label}
                     </a>
                   ) : (
-                    <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>{b.label}</span>
+                    <span style={{ color: "var(--text-primary)" }}>{b.label}</span>
                   )}
                 </span>
               ))}
             </div>
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>
-                {title || "Financial Operations"}
+              <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-primary)" }}>
+                {title || "FINRESOLVE"}
               </span>
               {subtitle && (
-                <span style={{ fontSize: "12px", color: "var(--text-muted)", borderLeft: "1px solid var(--border-medium)", paddingLeft: "0.5rem" }}>
+                <span style={{ fontSize: "11px", color: "var(--text-muted)", borderLeft: "1px solid var(--border-subtle)", paddingLeft: "0.5rem" }}>
                   {subtitle}
                 </span>
               )}
@@ -59,73 +59,65 @@ export function Header({ title, subtitle, breadcrumbs, actions }: HeaderProps) {
           )}
         </div>
 
-        {/* Center: Global Search Bar Trigger */}
+        {/* Center: Search Field */}
         <div
           onClick={() => setIsCommandOpen(true)}
           style={{
             display: "flex",
             alignItems: "center",
             gap: "0.6rem",
-            backgroundColor: "var(--bg-surface-secondary)",
+            backgroundColor: "var(--bg-input)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: "5px",
-            padding: "0.35rem 0.85rem",
+            padding: "0.3rem 0.85rem",
             width: "360px",
             cursor: "pointer",
             color: "var(--text-muted)",
-            fontSize: "12.5px",
-            transition: "all 0.15s ease",
+            fontSize: "11.5px",
+            borderRadius: "1px",
+            transition: "all 0.12s ease",
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = "var(--border-medium)";
-            e.currentTarget.style.backgroundColor = "var(--bg-surface-elevated)";
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = "var(--border-subtle)";
-            e.currentTarget.style.backgroundColor = "var(--bg-surface-secondary)";
           }}
         >
-          <SearchIcon size={13} color="var(--text-muted)" />
-          <span style={{ flex: 1 }}>Search cases, merchants, settlements...</span>
+          <SearchIcon size={12} color="var(--text-muted)" />
+          <span style={{ flex: 1, letterSpacing: "0.01em" }}>Search cases, merchants, settlements...</span>
           <span style={{
-            fontSize: "10px",
+            fontSize: "9px",
             fontFamily: "var(--font-mono)",
-            backgroundColor: "var(--bg-surface)",
             border: "1px solid var(--border-medium)",
-            borderRadius: "3px",
-            padding: "0.1rem 0.35rem",
-            color: "var(--text-secondary)",
+            padding: "0.05rem 0.3rem",
+            color: "var(--text-muted)",
+            borderRadius: "1px",
           }}>⌘K</span>
         </div>
 
-        {/* Right: Metadata & Actions */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          {/* Metadata Pill */}
+        {/* Right: Operational Status & Action */}
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <div style={{
             display: "flex",
             alignItems: "center",
-            gap: "0.6rem",
-            padding: "0.25rem 0.6rem",
-            background: "var(--bg-surface-secondary)",
-            border: "1px solid var(--border-subtle)",
-            borderRadius: "4px",
-            fontSize: "11px",
-            color: "var(--text-secondary)",
+            gap: "0.75rem",
+            fontSize: "10.5px",
             fontFamily: "var(--font-mono)",
+            color: "var(--text-muted)",
           }}>
-            <span style={{ display: "flex", alignItems: "center", gap: "0.35rem", color: "var(--color-teal)" }}>
+            <span style={{ display: "flex", alignItems: "center", gap: "0.35rem", color: "var(--color-brand)" }}>
               <span style={{
-                width: "5px",
-                height: "5px",
+                width: "4px",
+                height: "4px",
                 borderRadius: "50%",
-                backgroundColor: "var(--color-teal)",
+                backgroundColor: "var(--color-brand)",
               }} />
-              <span style={{ fontWeight: 600 }}>OPERATIONAL</span>
+              <span style={{ fontWeight: 700 }}>OPERATIONAL</span>
             </span>
-            <span style={{ color: "var(--border-medium)" }}>|</span>
+            <span style={{ color: "var(--border-subtle)" }}>|</span>
             <span>SEED 42</span>
-            <span style={{ color: "var(--border-medium)" }}>|</span>
-            <span style={{ color: "var(--text-muted)" }}>PROD</span>
+            <span style={{ color: "var(--border-subtle)" }}>|</span>
+            <span style={{ color: "var(--text-dim)" }}>PROD</span>
           </div>
 
           {actions && <div>{actions}</div>}

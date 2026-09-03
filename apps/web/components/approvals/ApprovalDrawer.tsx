@@ -64,37 +64,39 @@ export function ApprovalDrawer({
     <div style={{
       position: isOpen ? "fixed" : "relative",
       inset: isOpen ? 0 : undefined,
-      backgroundColor: isOpen ? "rgba(7, 11, 18, 0.75)" : "transparent",
-      backdropFilter: isOpen ? "blur(4px)" : undefined,
-      zIndex: isOpen ? 999 : undefined,
+      backgroundColor: isOpen ? "rgba(9, 9, 9, 0.85)" : "transparent",
+      backdropFilter: isOpen ? "blur(2px)" : undefined,
+      zIndex: 999,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      padding: isOpen ? "1rem" : 0,
+      padding: isOpen ? "1.5rem" : 0,
     }}>
       <div style={{
         backgroundColor: "var(--bg-surface)",
         border: "1px solid var(--border-subtle)",
-        borderRadius: "6px",
-        padding: "1.25rem 1.5rem",
+        padding: "1.75rem",
         width: "100%",
-        maxWidth: "520px",
+        maxWidth: "540px",
         display: "flex",
         flexDirection: "column",
-        gap: "1rem",
+        gap: "1.25rem",
         boxShadow: "var(--shadow-lg)",
       }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <h3 style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <ApprovalsIcon size={16} color="var(--color-indigo)" /> Human Approval & Sign-Off Gate
+            <div style={{ fontSize: "10.5px", fontWeight: 700, color: "var(--color-brand)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+              DUAL SIGN-OFF MANDATE
+            </div>
+            <h3 className="heading-editorial title-large" style={{ marginTop: "2px" }}>
+              HUMAN APPROVAL GATE
             </h3>
             <p style={{ fontSize: "11.5px", color: "var(--text-muted)", marginTop: "2px" }}>
               Enforces Role-Based Access Control and separation of duties. Proposer cannot self-approve.
             </p>
           </div>
           {onClose && (
-            <button onClick={onClose} className="btn btn-secondary btn-sm">
+            <button onClick={onClose} className="btn btn-secondary btn-sm" style={{ padding: "0.2rem 0.5rem" }}>
               ✕
             </button>
           )}
@@ -104,12 +106,11 @@ export function ApprovalDrawer({
           <div style={{
             padding: "0.75rem 1rem",
             backgroundColor: "var(--status-discrepancy-bg)",
-            color: "var(--status-discrepancy)",
+            color: "var(--color-brand)",
             border: "1px solid var(--status-discrepancy-border)",
-            borderRadius: "5px",
-            fontSize: "12px",
+            fontSize: "11.5px",
           }}>
-            <strong>Access Denied:</strong> {errorMsg}
+            <strong>ACCESS DENIED:</strong> {errorMsg}
           </div>
         )}
 
@@ -119,16 +120,15 @@ export function ApprovalDrawer({
             backgroundColor: "var(--status-reconciled-bg)",
             color: "var(--status-reconciled)",
             border: "1px solid var(--status-reconciled-border)",
-            borderRadius: "5px",
-            fontSize: "12px",
+            fontSize: "11.5px",
           }}>
             ✓ {successMsg}
           </div>
         )}
 
         <div>
-          <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "0.35rem" }}>
-            Analyst Review Comments
+          <label style={{ display: "block", fontSize: "10.5px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.4rem" }}>
+            JUSTIFICATION & AUDIT NOTES
           </label>
           <textarea
             rows={3}
@@ -146,14 +146,14 @@ export function ApprovalDrawer({
             disabled={isSubmitting}
             className="btn btn-danger btn-sm"
           >
-            Reject Proposal
+            REJECT PROPOSAL
           </button>
           <button
             onClick={handleApprove}
             disabled={isSubmitting}
-            className="btn btn-success btn-sm"
+            className="btn btn-primary btn-sm"
           >
-            {isSubmitting ? "Signing..." : "Sign & Approve Resolution"}
+            {isSubmitting ? "SIGNING..." : "SIGN & APPROVE RESOLUTION"}
           </button>
         </div>
       </div>

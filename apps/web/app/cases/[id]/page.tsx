@@ -59,9 +59,9 @@ export default function CaseDetailPage() {
   if (isLoading) {
     return (
       <div>
-        <Header breadcrumbs={[{ label: "FinResolve", href: "/" }, { label: "Cases", href: "/cases" }, { label: caseId }]} />
+        <Header breadcrumbs={[{ label: "FINRESOLVE", href: "/" }, { label: "CASES", href: "/cases" }, { label: caseId }]} />
         <div className="page-body" style={{ textAlign: "center", padding: "4rem" }}>
-          <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>Loading financial records & evidence graph...</p>
+          <p className="mono" style={{ color: "var(--text-muted)", fontSize: "12px" }}>LOADING FINANCIAL RECORDS & EVIDENCE GRAPH...</p>
         </div>
       </div>
     );
@@ -70,11 +70,11 @@ export default function CaseDetailPage() {
   if (!caseData) {
     return (
       <div>
-        <Header breadcrumbs={[{ label: "FinResolve", href: "/" }, { label: "Cases", href: "/cases" }, { label: "Not Found" }]} />
+        <Header breadcrumbs={[{ label: "FINRESOLVE", href: "/" }, { label: "CASES", href: "/cases" }, { label: "NOT FOUND" }]} />
         <div className="page-body" style={{ textAlign: "center", padding: "4rem" }}>
-          <p style={{ color: "var(--status-discrepancy)", fontSize: "14px", fontWeight: 600 }}>Case &apos;{caseId}&apos; could not be located.</p>
+          <p style={{ color: "var(--color-brand)", fontSize: "14px", fontWeight: 700 }}>CASE &apos;{caseId}&apos; COULD NOT BE LOCATED.</p>
           <Link href="/cases" className="btn btn-secondary" style={{ marginTop: "1rem" }}>
-            ← Back to Cases
+            ← BACK TO CASES
           </Link>
         </div>
       </div>
@@ -94,120 +94,138 @@ export default function CaseDetailPage() {
     <div>
       <Header
         breadcrumbs={[
-          { label: "FinResolve", href: "/" },
-          { label: "Cases", href: "/cases" },
+          { label: "FINRESOLVE", href: "/" },
+          { label: "CASES", href: "/cases" },
           { label: caseData.case_id },
         ]}
         actions={
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <button
-              onClick={handleRunInvestigation}
-              disabled={isInvestigating}
-              className="btn btn-primary btn-sm"
-            >
-              <PlayIcon size={12} />
-              <span>{isInvestigating ? "Investigating..." : "Run AI Investigation"}</span>
-            </button>
-          </div>
+          <button
+            onClick={handleRunInvestigation}
+            disabled={isInvestigating}
+            className="btn btn-primary btn-sm"
+          >
+            <PlayIcon size={11} />
+            <span>{isInvestigating ? "INVESTIGATING..." : "RUN AI INVESTIGATION"}</span>
+          </button>
         }
       />
 
-      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
         {/* Terminal Header */}
-        <div className="surface" style={{ padding: "1rem 1.25rem" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem" }}>
+        <div style={{
+          borderBottom: "1px solid var(--border-subtle)",
+          paddingBottom: "1.5rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1.25rem",
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <span className="mono" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                  {caseData.case_id}
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <span className="mono" style={{ fontSize: "12px", color: "var(--color-brand)", fontWeight: 700 }}>
+                  CASE ID // {caseData.case_id}
+                </span>
+                <span className="mono" style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                  MERCHANT: {caseData.merchant_id}
                 </span>
                 <span style={{
-                  fontSize: "11px",
-                  padding: "0.15rem 0.45rem",
-                  borderRadius: "3px",
-                  backgroundColor: "var(--bg-surface-secondary)",
-                  color: "var(--text-secondary)",
-                  border: "1px solid var(--border-subtle)",
+                  fontSize: "10px",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.04em",
+                  color: caseData.status === "reconciled" ? "var(--status-reconciled)" : "var(--color-brand)",
                 }}>
-                  Merchant: {caseData.merchant_id}
-                </span>
-                <span className={`badge badge-${caseData.status === "reconciled" ? "reconciled" : "discrepancy"}`}>
-                  {caseData.status === "reconciled" ? "RECONCILED" : "DISCREPANCY DETECTED"}
+                  ● {caseData.status}
                 </span>
                 {isBlockedCompoundCase && (
-                  <span className="badge badge-blocked">
-                    FAIL-CLOSED BLOCKED
+                  <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--color-brand)" }}>
+                    ● FAIL-CLOSED BLOCKED
                   </span>
                 )}
               </div>
-              <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>
-                Multi-party ledger reconciliation trace • Difficulty: <strong style={{ textTransform: "capitalize", color: "var(--text-secondary)" }}>{caseData.difficulty}</strong>
-              </div>
+
+              <h1 className="heading-editorial title-large" style={{ marginTop: "0.4rem" }}>
+                {caseId === "CASE-000003" ? "SETTLEMENT DISCREPANCY" :
+                 caseId === "CASE-000002" ? "BALANCED RECONCILIATION BASELINE" :
+                 caseId === "CASE-000132" ? "HIGH-VALUE SETTLEMENT DISCREPANCY" :
+                 caseId === "CASE-000009" ? "COMPOUND CORRUPTION DISCREPANCY" :
+                 `${caseData.difficulty.toUpperCase()} DISCREPANCY TRACE`}
+              </h1>
             </div>
 
-            {/* Financial Variance Strip */}
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "1.25rem",
-              backgroundColor: "var(--bg-surface-secondary)",
-              padding: "0.5rem 1rem",
-              borderRadius: "5px",
-              border: "1px solid var(--border-subtle)",
-            }}>
-              <div>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Captured</div>
-                <div className="tabular-num mono" style={{ fontSize: "13.5px", fontWeight: 600, color: "var(--text-primary)" }}>
-                  {grossPay > 0 ? formatINR(grossPay) : "—"}
-                </div>
+            {/* Financial Variance Hero */}
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.06em" }}>
+                NET VARIANCE
               </div>
-              <div style={{ color: "var(--border-medium)" }}>→</div>
-              <div>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Settled</div>
-                <div className="tabular-num mono" style={{ fontSize: "13.5px", fontWeight: 600, color: "var(--text-primary)" }}>
-                  {netSet > 0 ? formatINR(netSet) : "—"}
-                </div>
-              </div>
-              <div style={{ color: "var(--border-medium)" }}>→</div>
-              <div>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Variance</div>
-                <div className="tabular-num mono" style={{
-                  fontSize: "13.5px",
-                  fontWeight: 700,
-                  color: discrepancyDelta === 0 ? "var(--status-reconciled)" : "var(--status-discrepancy)",
-                }}>
-                  {discrepancyDelta !== 0 ? formatINR(discrepancyDelta) : "₹0.00"}
-                </div>
+              <div className="tabular-num heading-editorial" style={{
+                fontSize: "2.2rem",
+                color: discrepancyDelta === 0 ? "var(--status-reconciled)" : "var(--color-brand)",
+                marginTop: "2px",
+              }}>
+                {discrepancyDelta !== 0 ? formatINR(discrepancyDelta) : "₹0.00"}
               </div>
             </div>
           </div>
 
-          {/* Tab Navigation */}
+          {/* Horizontal Financial Comparison Strip */}
           <div style={{
-            display: "flex",
-            gap: "0.25rem",
-            marginTop: "1rem",
-            borderTop: "1px solid var(--border-hairline)",
-            paddingTop: "0.75rem",
+            display: "grid",
+            gridTemplateColumns: "1fr auto 1fr auto 1.2fr",
+            alignItems: "center",
+            gap: "1rem",
+            backgroundColor: "var(--bg-secondary)",
+            border: "1px solid var(--border-subtle)",
+            padding: "1rem 1.5rem",
           }}>
+            <div>
+              <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.06em" }}>Captured Gross</div>
+              <div className="tabular-num heading-editorial" style={{ fontSize: "1.35rem", color: "var(--text-primary)", marginTop: "2px" }}>
+                {grossPay > 0 ? formatINR(grossPay) : "—"}
+              </div>
+            </div>
+            <div style={{ color: "var(--text-dim)", fontSize: "1.2rem" }}>→</div>
+            <div>
+              <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.06em" }}>Settled Net</div>
+              <div className="tabular-num heading-editorial" style={{ fontSize: "1.35rem", color: "var(--text-primary)", marginTop: "2px" }}>
+                {netSet > 0 ? formatINR(netSet) : "—"}
+              </div>
+            </div>
+            <div style={{ color: "var(--text-dim)", fontSize: "1.2rem" }}>→</div>
+            <div>
+              <div style={{ fontSize: "10px", color: "var(--color-brand)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.06em" }}>Net Variance</div>
+              <div className="tabular-num heading-editorial" style={{
+                fontSize: "1.35rem",
+                color: discrepancyDelta === 0 ? "var(--status-reconciled)" : "var(--color-brand)",
+                marginTop: "2px",
+              }}>
+                {discrepancyDelta !== 0 ? formatINR(discrepancyDelta) : "₹0.00 BALANCED"}
+              </div>
+            </div>
+          </div>
+
+          {/* Sub-Tabs */}
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             {[
-              { id: "overview", label: "Workstation Overview" },
-              { id: "records", label: `Observed Records (${(caseData.observed?.payments?.length || 0) + (caseData.observed?.settlements?.length || 0) + (caseData.observed?.fees?.length || 0)})` },
-              { id: "evidence", label: "Evidence Graph" },
-              { id: "investigation", label: "AI Investigation" },
-              { id: "resolution", label: "Resolution Simulator" },
+              { id: "overview", label: "01 WORKSTATION OVERVIEW" },
+              { id: "records", label: `02 OBSERVED RECORDS (${(caseData.observed?.payments?.length || 0) + (caseData.observed?.settlements?.length || 0)})` },
+              { id: "evidence", label: "03 EVIDENCE GRAPH" },
+              { id: "investigation", label: "04 AI INVESTIGATION" },
+              { id: "resolution", label: "05 RESOLUTION SIMULATOR" },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 style={{
-                  padding: "0.35rem 0.75rem",
-                  fontSize: "12px",
-                  fontWeight: activeTab === tab.id ? 600 : 500,
-                  borderRadius: "4px",
-                  color: activeTab === tab.id ? "var(--text-primary)" : "var(--text-secondary)",
+                  padding: "0.4rem 0.75rem",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-heading)",
+                  letterSpacing: "0.04em",
+                  color: activeTab === tab.id ? "var(--text-primary)" : "var(--text-muted)",
                   backgroundColor: activeTab === tab.id ? "var(--bg-surface-elevated)" : "transparent",
                   border: activeTab === tab.id ? "1px solid var(--border-medium)" : "1px solid transparent",
+                  borderBottom: activeTab === tab.id ? "2px solid var(--color-brand)" : "2px solid transparent",
                   transition: "all 0.12s ease",
                 }}
               >
@@ -217,22 +235,20 @@ export default function CaseDetailPage() {
           </div>
         </div>
 
-        {/* Tab 1: Workstation Overview (2-Column Split) */}
+        {/* Tab 1: Workstation Overview */}
         {activeTab === "overview" && (
-          <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: "1rem" }}>
-            {/* Left Column: Investigation Timeline & Discrepancies */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {/* Discrepancies Panel */}
-              <div className="surface" style={{ padding: "1rem 1.25rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-                  <h3 style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                    Detected Discrepancies ({discrepancies.length})
-                  </h3>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.15fr", gap: "1.5rem" }}>
+            {/* Left Column */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              {/* Detected Discrepancies */}
+              <div>
+                <div style={{ fontSize: "10.5px", fontWeight: 800, color: "var(--color-brand)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
+                  <span style={{ color: "var(--color-brand)" }}>/</span> DISCREPANCY FINDINGS ({discrepancies.length})
                 </div>
                 {discrepancies.length === 0 ? (
-                  <div style={{ padding: "1.25rem", textAlign: "center", color: "var(--text-muted)", fontSize: "12.5px" }}>
-                    <div style={{ color: "var(--status-reconciled)", fontWeight: 600 }}>Zero Discrepancies Detected</div>
-                    <div style={{ fontSize: "11.5px", marginTop: "2px" }}>All multi-party signals balance with zero accounting variance.</div>
+                  <div style={{ padding: "1.5rem", border: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-secondary)", textAlign: "center" }}>
+                    <div style={{ color: "var(--status-reconciled)", fontWeight: 700, fontSize: "13px" }}>ZERO DISCREPANCIES DETECTED</div>
+                    <div style={{ fontSize: "11.5px", color: "var(--text-muted)", marginTop: "2px" }}>All multi-party signals balance with zero accounting variance.</div>
                   </div>
                 ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -240,22 +256,21 @@ export default function CaseDetailPage() {
                       <div
                         key={i}
                         style={{
-                          padding: "0.75rem 1rem",
-                          backgroundColor: "var(--bg-surface-secondary)",
+                          padding: "0.85rem 1rem",
+                          backgroundColor: "var(--bg-secondary)",
                           border: "1px solid var(--border-subtle)",
-                          borderLeft: "3px solid var(--status-discrepancy)",
-                          borderRadius: "4px",
+                          borderLeft: "3px solid var(--color-brand)",
                         }}
                       >
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-primary)" }}>
+                          <span style={{ fontSize: "12.5px", fontWeight: 700, color: "var(--text-primary)" }}>
                             {d.rule_name || "Reconciliation Rule Exception"}
                           </span>
-                          <span className="badge badge-discrepancy" style={{ fontSize: "10.5px" }}>
-                            {d.severity?.toUpperCase() || "HIGH"}
+                          <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--color-brand)" }}>
+                            ● {d.severity?.toUpperCase() || "HIGH"}
                           </span>
                         </div>
-                        <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "4px" }}>
+                        <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "4px", lineHeight: 1.4 }}>
                           {d.description}
                         </p>
                       </div>
@@ -264,38 +279,42 @@ export default function CaseDetailPage() {
                 )}
               </div>
 
-              {/* 7-Stage Pipeline Visualizer */}
-              <div className="surface" style={{ padding: "1rem 1.25rem" }}>
-                <h3 style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: "0.75rem" }}>
-                  Investigation Pipeline Stages
-                </h3>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+              {/* Vertical Editorial Timeline */}
+              <div>
+                <div style={{ fontSize: "10.5px", fontWeight: 800, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
+                  <span style={{ color: "var(--color-brand)" }}>/</span> INVESTIGATION PIPELINE LIFECYCLE
+                </div>
+                <div style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  border: "1px solid var(--border-subtle)",
+                  backgroundColor: "var(--bg-secondary)",
+                }}>
                   {[
                     { num: "01", name: "DETECTED", desc: "Multi-signal reconciliation rules evaluated", state: "done" },
                     { num: "02", name: "EVIDENCE COLLECTED", desc: "Graph edges constructed for payments & settlements", state: "done" },
-                    { num: "03", name: "ROOT CAUSE IDENTIFIED", desc: investigation ? "Diagnosed via Bayesian plausibility" : "Ready for AI investigation", state: investigation ? "done" : "ready" },
-                    { num: "04", name: "SIMULATION", desc: isBlockedCompoundCase ? "Fail-closed blocked (invalid state)" : "Virtual deep-clone state validated", state: isBlockedCompoundCase ? "blocked" : (investigation ? "done" : "pending") },
-                    { num: "05", name: "POLICY VALIDATION", desc: "Deterministic gating POL-001 - POL-003", state: investigation ? "done" : "pending" },
-                    { num: "06", name: "APPROVAL", desc: "Separation of duties review workflow", state: investigation?.resolution_plan?.policy_decision?.decision === "HUMAN_REVIEW" ? "active" : "pending" },
-                    { num: "07", name: "AUDIT", desc: "Append-only SHA-256 backwards hash-pointer", state: "done" },
+                    { num: "03", name: "INVESTIGATION", desc: "Bounded deterministic agent execution", state: investigation ? "done" : "ready" },
+                    { num: "04", name: "DIAGNOSIS", desc: investigation ? "Root cause synthesized" : "Bayesian ranking ready", state: investigation ? "done" : "pending" },
+                    { num: "05", name: "SIMULATION", desc: isBlockedCompoundCase ? "Fail-closed blocked (invalid state)" : "Virtual deep-clone state validated", state: isBlockedCompoundCase ? "blocked" : (investigation ? "done" : "pending") },
+                    { num: "06", name: "POLICY", desc: "Deterministic gating POL-001 - POL-003", state: investigation ? "done" : "pending" },
+                    { num: "07", name: "APPROVAL", desc: "Separation of duties review workflow", state: investigation?.resolution_plan?.policy_decision?.decision === "HUMAN_REVIEW" ? "active" : "pending" },
+                    { num: "08", name: "AUDIT", desc: "Append-only SHA-256 backwards hash-pointer", state: "done" },
                   ].map((stage, idx) => (
                     <div
                       key={idx}
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.75rem",
-                        padding: "0.45rem 0.65rem",
-                        backgroundColor: "var(--bg-surface-secondary)",
-                        borderRadius: "4px",
-                        border: "1px solid var(--border-hairline)",
+                        gap: "1rem",
+                        padding: "0.6rem 1rem",
+                        borderBottom: idx < 7 ? "1px solid var(--border-hairline)" : "none",
                       }}
                     >
-                      <span className="mono" style={{ fontSize: "11px", color: "var(--text-dim)", fontWeight: 600 }}>
+                      <span className="mono" style={{ fontSize: "11px", color: "var(--text-dim)", fontWeight: 700 }}>
                         {stage.num}
                       </span>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-primary)" }}>
+                        <div style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-primary)" }}>
                           {stage.name}
                         </div>
                         <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
@@ -303,22 +322,16 @@ export default function CaseDetailPage() {
                         </div>
                       </div>
                       <span style={{
-                        fontSize: "10.5px",
-                        padding: "0.1rem 0.4rem",
-                        borderRadius: "3px",
-                        fontWeight: 600,
-                        backgroundColor:
-                          stage.state === "done" ? "var(--status-reconciled-bg)" :
-                          stage.state === "blocked" ? "var(--status-blocked-bg)" :
-                          stage.state === "active" ? "var(--status-review-bg)" :
-                          stage.state === "ready" ? "var(--color-indigo-bg)" : "var(--bg-surface)",
+                        fontSize: "10px",
+                        fontWeight: 700,
+                        letterSpacing: "0.04em",
                         color:
                           stage.state === "done" ? "var(--status-reconciled)" :
-                          stage.state === "blocked" ? "var(--status-blocked)" :
+                          stage.state === "blocked" ? "var(--color-brand)" :
                           stage.state === "active" ? "var(--status-review)" :
-                          stage.state === "ready" ? "var(--color-indigo)" : "var(--text-dim)",
+                          stage.state === "ready" ? "var(--text-primary)" : "var(--text-dim)",
                       }}>
-                        {stage.state.toUpperCase()}
+                        ● {stage.state.toUpperCase()}
                       </span>
                     </div>
                   ))}
@@ -326,112 +339,126 @@ export default function CaseDetailPage() {
               </div>
             </div>
 
-            {/* Right Column: Hero Counterfactual Simulation & Policy Engine */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {/* Counterfactual Resolution Hero */}
-              <div className="surface" style={{ padding: "1.15rem 1.25rem", border: "1px solid var(--border-subtle)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.6rem" }}>
-                  <div>
-                    <div style={{ fontSize: "10.5px", fontWeight: 700, color: "var(--color-indigo)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                      Hero Component
-                    </div>
-                    <h3 style={{ fontSize: "13.5px", fontWeight: 700, color: "var(--text-primary)", marginTop: "1px" }}>
-                      COUNTERFACTUAL RESOLUTION
-                    </h3>
+            {/* Right Column: Hero Counterfactual Simulation & Policy */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              {/* Counterfactual Simulation Hero */}
+              <div style={{
+                backgroundColor: "var(--bg-secondary)",
+                border: "1px solid var(--border-subtle)",
+                padding: "1.5rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.25rem",
+              }}>
+                <div>
+                  <div style={{ fontSize: "10.5px", fontWeight: 800, color: "var(--color-brand)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                    / SIMULATE BEFORE EXECUTION
                   </div>
-                  <span style={{
-                    fontSize: "10px",
-                    fontWeight: 600,
-                    padding: "0.15rem 0.45rem",
-                    borderRadius: "3px",
-                    backgroundColor: "var(--color-indigo-bg)",
-                    color: "var(--color-indigo)",
-                    border: "1px solid var(--color-indigo-border)",
-                  }}>
-                    VIRTUAL MEMORY SIMULATION
-                  </span>
+                  <h2 className="heading-editorial title-large" style={{ marginTop: "2px" }}>
+                    COUNTERFACTUAL SIMULATION
+                  </h2>
+                  <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+                    Proves candidate corrections eliminate variance without violating double-entry conservation of money.
+                  </p>
                 </div>
-                <p style={{ fontSize: "11.5px", color: "var(--text-muted)", marginBottom: "0.85rem" }}>
-                  Simulate candidate corrective adjustments before human sign-off or ledger commit.
-                </p>
 
-                {/* 3-Column Transformation */}
+                {/* 3-Step Transformation */}
                 <div style={{
                   display: "grid",
                   gridTemplateColumns: "1fr auto 1.2fr auto 1fr",
                   alignItems: "center",
-                  gap: "0.5rem",
-                  backgroundColor: "var(--bg-surface-secondary)",
-                  padding: "0.75rem",
-                  borderRadius: "5px",
+                  gap: "0.75rem",
                   border: "1px solid var(--border-subtle)",
+                  backgroundColor: "var(--bg-canvas)",
+                  padding: "1rem",
                 }}>
                   <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase" }}>Current</div>
-                    <div className="tabular-num mono" style={{ fontSize: "13px", fontWeight: 700, color: "var(--text-primary)", marginTop: "2px" }}>
+                    <div style={{ fontSize: "9.5px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 700 }}>CURRENT</div>
+                    <div className="tabular-num heading-editorial" style={{ fontSize: "1.15rem", color: "var(--text-primary)", marginTop: "2px" }}>
                       {netSet > 0 ? formatINR(netSet) : "—"}
                     </div>
                   </div>
-                  <div style={{ color: "var(--border-medium)" }}>→</div>
+                  <div style={{ color: "var(--text-dim)" }}>↓</div>
                   <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "10px", color: "var(--color-indigo)", textTransform: "uppercase", fontWeight: 600 }}>Proposed Adjustment</div>
-                    <div className="tabular-num mono" style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-indigo)", marginTop: "2px" }}>
+                    <div style={{ fontSize: "9.5px", color: "var(--color-brand)", textTransform: "uppercase", fontWeight: 700 }}>PROPOSED ADJUSTMENT</div>
+                    <div className="tabular-num heading-editorial" style={{ fontSize: "1.15rem", color: "var(--color-brand)", marginTop: "2px" }}>
                       {discrepancyDelta !== 0 ? `+${formatINR(Math.abs(discrepancyDelta))}` : "₹0.00"}
                     </div>
                   </div>
-                  <div style={{ color: "var(--border-medium)" }}>→</div>
+                  <div style={{ color: "var(--text-dim)" }}>↓</div>
                   <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "10px", color: "var(--status-reconciled)", textTransform: "uppercase", fontWeight: 600 }}>Projected</div>
-                    <div className="tabular-num mono" style={{ fontSize: "13px", fontWeight: 700, color: "var(--status-reconciled)", marginTop: "2px" }}>
+                    <div style={{ fontSize: "9.5px", color: "var(--status-reconciled)", textTransform: "uppercase", fontWeight: 700 }}>PROJECTED</div>
+                    <div className="tabular-num heading-editorial" style={{ fontSize: "1.15rem", color: "var(--status-reconciled)", marginTop: "2px" }}>
                       {grossPay > 0 ? formatINR(grossPay - totalFees) : "—"}
                     </div>
                   </div>
                 </div>
 
-                {/* Validation Checklist */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.75rem", padding: "0 0.25rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "11.5px", color: "var(--status-reconciled)" }}>
-                    <span>✓</span>
-                    <span>Residual Discrepancy: <strong>₹0.00</strong></span>
+                {/* Large Result Callouts */}
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "1rem",
+                  borderTop: "1px solid var(--border-hairline)",
+                  paddingTop: "1rem",
+                }}>
+                  <div>
+                    <div className="tabular-num heading-editorial" style={{ fontSize: "1.75rem", color: "var(--status-reconciled)" }}>
+                      ₹0.00
+                    </div>
+                    <div style={{ fontSize: "10px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-muted)" }}>
+                      RESIDUAL DISCREPANCY
+                    </div>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "11.5px", color: "var(--status-reconciled)" }}>
-                    <span>✓</span>
-                    <span>Double-Entry Ledger: <strong>BALANCED</strong></span>
+
+                  <div>
+                    <div className="heading-editorial" style={{ fontSize: "1.75rem", color: "var(--status-reconciled)" }}>
+                      BALANCED
+                    </div>
+                    <div style={{ fontSize: "10px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-muted)" }}>
+                      DOUBLE-ENTRY LEDGER
+                    </div>
                   </div>
                 </div>
 
                 {/* Simulation Notice */}
                 <div style={{
-                  marginTop: "0.75rem",
-                  padding: "0.45rem 0.65rem",
+                  padding: "0.6rem 0.85rem",
                   backgroundColor: "var(--bg-canvas)",
-                  borderRadius: "4px",
+                  border: "1px solid var(--border-hairline)",
                   fontSize: "10.5px",
                   color: "var(--text-muted)",
                   textAlign: "center",
-                  border: "1px solid var(--border-hairline)",
-                  fontWeight: 500,
+                  fontWeight: 700,
+                  letterSpacing: "0.06em",
                 }}>
                   SIMULATION ONLY • NO FINANCIAL TRANSACTION EXECUTED
                 </div>
               </div>
 
-              {/* Deterministic Policy Governance Panel */}
-              <div className="surface" style={{ padding: "1.15rem 1.25rem" }}>
-                <div style={{ marginBottom: "0.6rem" }}>
-                  <h3 style={{ fontSize: "12.5px", fontWeight: 700, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              {/* Policy Governance */}
+              <div style={{
+                backgroundColor: "var(--bg-secondary)",
+                border: "1px solid var(--border-subtle)",
+                padding: "1.25rem 1.5rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+              }}>
+                <div>
+                  <div style={{ fontSize: "10.5px", fontWeight: 800, color: "var(--color-brand)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                    / POLICY GOVERNANCE
+                  </div>
+                  <h3 className="heading-editorial title-medium" style={{ marginTop: "2px" }}>
                     DETERMINISTIC GOVERNANCE
                   </h3>
-                  <div style={{ fontSize: "11.5px", color: "var(--text-muted)", marginTop: "2px" }}>
-                    AI findings do not authorize financial actions.
-                  </div>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
                   {[
-                    { id: "POL-001", name: "Simulation Validity", status: "PASSED", color: "var(--status-reconciled)" },
-                    { id: "POL-002", name: "Evidence Sufficiency", status: "PASSED", color: "var(--status-reconciled)" },
-                    { id: "POL-003", name: "Monetary Risk Threshold (₹5,000)", status: Math.abs(discrepancyDelta) > 500000 ? "HUMAN_REVIEW" : "PASSED", color: Math.abs(discrepancyDelta) > 500000 ? "var(--status-review)" : "var(--status-reconciled)" },
+                    { id: "POL-001", name: "SIMULATION VALIDITY", status: "PASSED", color: "var(--status-reconciled)" },
+                    { id: "POL-002", name: "EVIDENCE SUFFICIENCY", status: "PASSED", color: "var(--status-reconciled)" },
+                    { id: "POL-003", name: "MONETARY RISK THRESHOLD", status: Math.abs(discrepancyDelta) > 500000 ? "HUMAN REVIEW REQUIRED" : "PASSED", color: Math.abs(discrepancyDelta) > 500000 ? "var(--status-review)" : "var(--status-reconciled)" },
                   ].map((pol) => (
                     <div
                       key={pol.id}
@@ -439,28 +466,37 @@ export default function CaseDetailPage() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        padding: "0.45rem 0.65rem",
-                        backgroundColor: "var(--bg-surface-secondary)",
-                        borderRadius: "4px",
+                        padding: "0.5rem 0.75rem",
+                        backgroundColor: "var(--bg-canvas)",
                         border: "1px solid var(--border-hairline)",
-                        fontSize: "12px",
+                        fontSize: "11.5px",
                       }}
                     >
                       <div>
-                        <span className="mono" style={{ fontWeight: 600, color: "var(--text-secondary)", marginRight: "0.5rem" }}>
+                        <span className="mono" style={{ fontWeight: 700, color: "var(--text-muted)", marginRight: "0.5rem" }}>
                           {pol.id}
                         </span>
-                        <span style={{ color: "var(--text-primary)" }}>{pol.name}</span>
+                        <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{pol.name}</span>
                       </div>
-                      <span style={{
-                        fontSize: "10.5px",
-                        fontWeight: 600,
-                        color: pol.color,
-                      }}>
-                        {pol.status}
+                      <span style={{ fontSize: "10.5px", fontWeight: 700, color: pol.color }}>
+                        ● {pol.status}
                       </span>
                     </div>
                   ))}
+                </div>
+
+                {/* Control Principle */}
+                <div style={{
+                  borderLeft: "2px solid var(--color-brand)",
+                  paddingLeft: "0.75rem",
+                  fontSize: "10.5px",
+                  color: "var(--text-secondary)",
+                  lineHeight: 1.4,
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.04em",
+                }}>
+                  AI FINDINGS DO NOT AUTHORIZE FINANCIAL ACTIONS.<br />ALL EXECUTION STRICTLY REQUIRES POLICY APPROVAL.
                 </div>
               </div>
             </div>

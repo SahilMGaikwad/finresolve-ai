@@ -12,22 +12,22 @@ export function AuditTimeline({ events, isTamperFree = true }: AuditTimelineProp
   return (
     <div className="table-container">
       <div style={{
-        padding: "0.85rem 1rem",
+        padding: "0.85rem 1.25rem",
         borderBottom: "1px solid var(--border-subtle)",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
       }}>
         <div>
-          <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)" }}>
-            Cryptographic Event Chain
+          <span className="heading-editorial" style={{ fontSize: "12px", color: "var(--text-primary)" }}>
+            CRYPTOGRAPHIC EVENT SEQUENCE
           </span>
-          <span style={{ fontSize: "12px", color: "var(--text-muted)", marginLeft: "0.5rem" }}>
-            ({events.length} chained blocks)
+          <span className="mono" style={{ fontSize: "11px", color: "var(--text-muted)", marginLeft: "0.5rem" }}>
+            ({events.length} BLOCKS)
           </span>
         </div>
-        <div style={{ fontSize: "11px", color: "var(--text-dim)", fontFamily: "var(--font-mono)" }}>
-          Event N ↓ hash Event N-1 ↓ hash Event N-2
+        <div className="mono" style={{ fontSize: "10.5px", color: "var(--text-dim)" }}>
+          EVENT N ↓ HASH EVENT N-1 ↓ HASH EVENT N-2
         </div>
       </div>
 
@@ -39,36 +39,40 @@ export function AuditTimeline({ events, isTamperFree = true }: AuditTimelineProp
         <table className="data-table">
           <thead>
             <tr>
-              <th>Timestamp</th>
-              <th>Actor</th>
-              <th>Role</th>
-              <th>Operation</th>
-              <th>Case ID</th>
-              <th>Result</th>
-              <th>SHA-256 Hash Pointer</th>
+              <th>TIMESTAMP</th>
+              <th>ACTOR</th>
+              <th>ROLE</th>
+              <th>OPERATION</th>
+              <th>CASE</th>
+              <th>RESULT</th>
+              <th>SHA-256 HASH POINTER</th>
             </tr>
           </thead>
           <tbody>
             {events.map((evt, idx) => (
               <tr key={evt.event_id || idx}>
-                <td className="mono" style={{ fontSize: "11.5px", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
+                <td className="mono" style={{ fontSize: "11px", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                   {formatDateTime(evt.timestamp)}
                 </td>
-                <td className="mono" style={{ fontWeight: 600, color: "var(--text-primary)" }}>
+                <td className="mono" style={{ fontWeight: 700, color: "var(--text-primary)" }}>
                   {evt.actor}
                 </td>
-                <td style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
+                <td style={{ fontSize: "11.5px", color: "var(--text-secondary)" }}>
                   {evt.actor_role}
                 </td>
-                <td style={{ fontWeight: 600, color: "var(--text-primary)", fontSize: "12px" }}>
+                <td style={{ fontWeight: 700, color: "var(--text-primary)", fontSize: "12px" }}>
                   {evt.operation}
                 </td>
-                <td className="mono" style={{ fontSize: "12px", color: "var(--color-indigo)" }}>
+                <td className="mono" style={{ fontSize: "11.5px", color: "var(--color-brand)" }}>
                   {evt.case_id || "—"}
                 </td>
                 <td>
-                  <span className={`badge badge-${evt.result === "SUCCESS" ? "reconciled" : "blocked"}`} style={{ fontSize: "10px" }}>
-                    {evt.result}
+                  <span style={{
+                    fontSize: "10.5px",
+                    fontWeight: 700,
+                    color: evt.result === "SUCCESS" ? "var(--status-reconciled)" : "var(--color-brand)",
+                  }}>
+                    ● {evt.result}
                   </span>
                 </td>
                 <td className="mono" style={{ fontSize: "11px", color: "var(--text-muted)" }}>
@@ -76,7 +80,7 @@ export function AuditTimeline({ events, isTamperFree = true }: AuditTimelineProp
                     <span title={evt.event_hash} style={{ cursor: "help" }}>
                       {evt.event_hash.slice(0, 16)}...
                     </span>
-                  ) : "GENESIS"}
+                  ) : "GENESIS_ROOT"}
                 </td>
               </tr>
             ))}

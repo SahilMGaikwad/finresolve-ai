@@ -1,6 +1,12 @@
-import { Inter } from "next/font/google";
+import { Space_Grotesk, Inter } from "next/font/google";
 import "../styles/globals.css";
 import { Navigation } from "../components/layout/Navigation";
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-heading",
+});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -10,7 +16,7 @@ const inter = Inter({
 
 export const metadata = {
   title: "FinResolve AI — Financial Reconciliation Operations",
-  description: "Enterprise Financial Operations & Counterfactual Resolution Workstation",
+  description: "Editorial Financial Operations & Counterfactual Resolution Workstation",
 };
 
 export default function RootLayout({
@@ -19,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable}`}>
       <body className={inter.className}>
         <div className="app-container">
           <Navigation />

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { DiscrepancyBadge } from "@/components/cases/DiscrepancyBadge";
-import { ArrowRightIcon } from "@/components/icons/Icons";
 import { api, CaseSummary } from "@/lib/api";
 
 export default function ApprovalsPage() {
@@ -31,77 +30,98 @@ export default function ApprovalsPage() {
   return (
     <div>
       <Header
-        breadcrumbs={[{ label: "FinResolve", href: "/" }, { label: "Approvals" }]}
+        breadcrumbs={[{ label: "FINRESOLVE", href: "/" }, { label: "APPROVALS" }]}
       />
 
-      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-        <div>
-          <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-indigo)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-            Governance & Compliance
+      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+        {/* Title Header */}
+        <div style={{
+          borderBottom: "1px solid var(--border-subtle)",
+          paddingBottom: "1.75rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+        }}>
+          <div>
+            <div style={{ fontSize: "10.5px", fontWeight: 700, color: "var(--color-brand)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>
+              COMPLIANCE & DUAL CONTROL
+            </div>
+            <h1 className="heading-editorial title-huge">
+              APPROVAL<br />QUEUE
+            </h1>
+            <div style={{ fontSize: "12.5px", color: "var(--text-secondary)", marginTop: "0.75rem" }}>
+              Actions requiring authorized financial review, threshold validation, and separation-of-duties sign-off.
+            </div>
           </div>
-          <h1 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.015em", marginTop: "2px" }}>
-            Resolution Approval Queue
-          </h1>
-          <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginTop: "2px" }}>
-            Actions requiring authorized financial review and separation-of-duties governance.
-          </p>
+
+          <div style={{ textAlign: "right" }}>
+            <div className="mono" style={{ fontSize: "10.5px", color: "var(--text-dim)" }}>GATE STATUS</div>
+            <div style={{ fontSize: "12px", fontWeight: 700, color: "var(--status-review)" }}>● {cases.length} PENDING SIGN-OFF</div>
+          </div>
         </div>
 
-        {/* Governance Policy Notice */}
+        {/* Governance Notice */}
         <div style={{
-          backgroundColor: "var(--status-review-bg)",
-          border: "1px solid var(--status-review-border)",
-          borderRadius: "6px",
-          padding: "0.75rem 1rem",
+          borderLeft: "3px solid var(--status-review)",
+          backgroundColor: "var(--bg-surface)",
+          border: "1px solid var(--border-subtle)",
+          borderLeftWidth: "3px",
+          padding: "1rem 1.25rem",
           fontSize: "12px",
           color: "var(--text-primary)",
         }}>
-          <strong style={{ color: "var(--status-review)" }}>Governance Policy: </strong>
+          <strong style={{ color: "var(--status-review)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Governance Invariant: </strong>
           Proposals exceeding ₹5,000 variance or compound errors require sign-off.
           Role-Based Access Control strictly blocks proposal creators from self-approving.
         </div>
 
-        {/* Approvals Table */}
+        {/* Approvals Compliance Ledger Table */}
         <div className="table-container">
-          <div style={{ padding: "0.85rem 1rem", borderBottom: "1px solid var(--border-subtle)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)" }}>
-              Pending Review & Sign-Off ({cases.length})
+          <div style={{
+            padding: "0.85rem 1.25rem",
+            borderBottom: "1px solid var(--border-subtle)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}>
+            <span className="heading-editorial" style={{ fontSize: "12px", color: "var(--text-primary)" }}>
+              PENDING RESOLUTION SIGN-OFFS ({cases.length})
             </span>
-            <span style={{ fontSize: "11.5px", color: "var(--text-muted)" }}>
-              Separation of Duties Enforced
+            <span className="mono" style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>
+              DUAL SIGN-OFF MANDATE ENFORCED
             </span>
           </div>
 
           <table className="data-table">
             <thead>
               <tr>
-                <th>Case ID</th>
-                <th>Merchant</th>
-                <th>Difficulty</th>
-                <th>Discrepancies</th>
-                <th>Policy Gate</th>
-                <th>Status</th>
-                <th style={{ textAlign: "right" }}>Action</th>
+                <th>CASE</th>
+                <th>MERCHANT</th>
+                <th>DIFFICULTY</th>
+                <th>DISCREPANCIES</th>
+                <th>POLICY GATE</th>
+                <th>STATUS</th>
+                <th style={{ textAlign: "right" }}>ACTION</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
-                    Loading approval queue...
+                  <td colSpan={7} style={{ textAlign: "center", padding: "2.5rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                    LOADING COMPLIANCE QUEUE...
                   </td>
                 </tr>
               ) : cases.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ padding: "2.5rem 1.5rem", textAlign: "center", color: "var(--text-muted)" }}>
-                    <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)" }}>No Pending Approvals</div>
+                  <td colSpan={7} style={{ padding: "3rem 1.5rem", textAlign: "center", color: "var(--text-muted)" }}>
+                    <div className="heading-editorial" style={{ fontSize: "1.2rem", color: "var(--text-primary)" }}>NO PENDING APPROVALS</div>
                     <div style={{ fontSize: "12px", marginTop: "4px" }}>Zero proposals currently awaiting human sign-off.</div>
                   </td>
                 </tr>
               ) : (
                 cases.map((c) => (
                   <tr key={c.case_id}>
-                    <td className="mono" style={{ fontWeight: 600 }}>
+                    <td className="mono" style={{ fontWeight: 700 }}>
                       <Link href={`/cases/${c.case_id}`} style={{ color: "var(--text-primary)" }}>
                         {c.case_id}
                       </Link>
@@ -110,15 +130,7 @@ export default function ApprovalsPage() {
                       {c.merchant_id}
                     </td>
                     <td>
-                      <span style={{
-                        fontSize: "11px",
-                        textTransform: "capitalize",
-                        padding: "0.15rem 0.45rem",
-                        borderRadius: "3px",
-                        backgroundColor: "var(--bg-surface-secondary)",
-                        color: "var(--text-secondary)",
-                        border: "1px solid var(--border-subtle)",
-                      }}>
+                      <span className="mono" style={{ fontSize: "10.5px", textTransform: "uppercase", color: "var(--text-secondary)" }}>
                         {c.difficulty}
                       </span>
                     </td>
@@ -126,22 +138,21 @@ export default function ApprovalsPage() {
                       <DiscrepancyBadge count={c.discrepancies_count} status={c.status} />
                     </td>
                     <td>
-                      <span className="badge badge-review" style={{ fontSize: "10.5px" }}>
-                        HUMAN REVIEW REQUIRED
+                      <span style={{ fontSize: "10.5px", fontWeight: 700, color: "var(--status-review)" }}>
+                        ● HUMAN REVIEW REQUIRED
                       </span>
                     </td>
                     <td>
-                      <span className="badge badge-discrepancy" style={{ fontSize: "10.5px" }}>
-                        PENDING
+                      <span style={{ fontSize: "10.5px", fontWeight: 700, color: "var(--color-brand)" }}>
+                        ● PENDING SIGN-OFF
                       </span>
                     </td>
                     <td style={{ textAlign: "right" }}>
                       <Link
                         href={`/cases/${c.case_id}`}
                         className="btn btn-primary btn-sm"
-                        style={{ fontSize: "11.5px", padding: "0.25rem 0.6rem" }}
                       >
-                        Review Case →
+                        REVIEW CASE →
                       </Link>
                     </td>
                   </tr>

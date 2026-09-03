@@ -72,25 +72,23 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       style={{
         position: "fixed",
         inset: 0,
-        backgroundColor: "rgba(7, 11, 18, 0.75)",
-        backdropFilter: "blur(4px)",
+        backgroundColor: "rgba(9, 9, 9, 0.85)",
+        backdropFilter: "blur(2px)",
         zIndex: 999,
         display: "flex",
         alignItems: "flex-start",
         justifyContent: "center",
-        paddingTop: "12vh",
+        paddingTop: "10vh",
       }}
       onClick={onClose}
     >
       <div
         style={{
           width: "100%",
-          maxWidth: "580px",
+          maxWidth: "620px",
           backgroundColor: "var(--bg-surface)",
           border: "1px solid var(--border-subtle)",
-          borderRadius: "6px",
           boxShadow: "var(--shadow-lg)",
-          overflow: "hidden",
           display: "flex",
           flexDirection: "column",
         }}
@@ -101,52 +99,53 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
           display: "flex",
           alignItems: "center",
           gap: "0.75rem",
-          padding: "0.75rem 1rem",
+          padding: "0.85rem 1.25rem",
           borderBottom: "1px solid var(--border-subtle)",
           backgroundColor: "var(--bg-surface-secondary)",
         }}>
-          <SearchIcon size={16} color="var(--text-muted)" />
+          <SearchIcon size={14} color="var(--color-brand)" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search cases, merchants, settlements, transactions..."
+            placeholder="TYPE TO SEARCH CASES, MERCHANTS, SETTLEMENTS..."
             style={{
               flex: 1,
               backgroundColor: "transparent",
               border: "none",
               outline: "none",
               color: "var(--text-primary)",
-              fontSize: "13.5px",
-              fontFamily: "inherit",
+              fontSize: "13px",
+              fontFamily: "var(--font-heading)",
+              textTransform: "uppercase",
+              letterSpacing: "0.04em",
+              fontWeight: 600,
             }}
           />
           {query && (
             <button onClick={() => setQuery("")} style={{ color: "var(--text-muted)", padding: "2px" }}>
-              <CloseIcon size={14} />
+              <CloseIcon size={12} />
             </button>
           )}
           <span style={{
-            fontSize: "10px",
+            fontSize: "9.5px",
             fontFamily: "var(--font-mono)",
-            backgroundColor: "var(--bg-surface)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: "3px",
             padding: "0.1rem 0.35rem",
             color: "var(--text-muted)",
           }}>ESC</span>
         </div>
 
         {/* Results Body */}
-        <div style={{ maxHeight: "360px", overflowY: "auto", padding: "0.5rem 0" }}>
+        <div style={{ maxHeight: "380px", overflowY: "auto", padding: "0.5rem 0" }}>
           {isLoading ? (
-            <div style={{ padding: "1.5rem", textAlign: "center", color: "var(--text-muted)", fontSize: "12.5px" }}>
-              Loading cases...
+            <div style={{ padding: "1.5rem", textAlign: "center", color: "var(--text-muted)", fontSize: "12px", fontFamily: "var(--font-mono)" }}>
+              SCANNING INDEX...
             </div>
           ) : matchedCases.length === 0 && matchedMerchants.length === 0 ? (
-            <div style={{ padding: "2rem", textAlign: "center", color: "var(--text-muted)", fontSize: "12.5px" }}>
-              No matches found for &quot;{query}&quot;
+            <div style={{ padding: "2rem", textAlign: "center", color: "var(--text-muted)", fontSize: "12px" }}>
+              NO MATCHES FOR &quot;{query}&quot;
             </div>
           ) : (
             <>
@@ -154,12 +153,12 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
               {matchedCases.length > 0 && (
                 <div style={{ marginBottom: "0.5rem" }}>
                   <div style={{
-                    fontSize: "10px",
-                    fontWeight: 600,
+                    fontSize: "9.5px",
+                    fontWeight: 700,
                     textTransform: "uppercase",
-                    letterSpacing: "0.06em",
+                    letterSpacing: "0.08em",
                     color: "var(--text-dim)",
-                    padding: "0.35rem 1rem",
+                    padding: "0.4rem 1.25rem",
                   }}>
                     Cases ({matchedCases.length})
                   </div>
@@ -168,42 +167,36 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                       key={c.case_id}
                       onClick={() => handleSelectCase(c.case_id)}
                       style={{
-                        padding: "0.55rem 1rem",
+                        padding: "0.6rem 1.25rem",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
                         cursor: "pointer",
-                        fontSize: "13px",
-                        transition: "background-color 0.1s ease",
+                        fontSize: "12.5px",
+                        borderBottom: "1px solid var(--border-hairline)",
                       }}
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--bg-surface-hover)"}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                     >
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                        <span className="mono" style={{ fontWeight: 600, color: "var(--text-primary)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                        <span className="mono" style={{ fontWeight: 700, color: "var(--text-primary)" }}>
                           {c.case_id}
                         </span>
-                        <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                        <span className="mono" style={{ fontSize: "11px", color: "var(--text-muted)" }}>
                           {c.merchant_id}
                         </span>
                       </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                         <span style={{
-                          fontSize: "10.5px",
-                          padding: "0.1rem 0.4rem",
-                          borderRadius: "3px",
-                          fontWeight: 500,
-                          backgroundColor:
-                            c.status === "reconciled" ? "var(--status-reconciled-bg)" : "var(--status-discrepancy-bg)",
+                          fontSize: "9.5px",
+                          fontWeight: 700,
+                          letterSpacing: "0.04em",
                           color:
-                            c.status === "reconciled" ? "var(--status-reconciled)" : "var(--status-discrepancy)",
-                          border: `1px solid ${
-                            c.status === "reconciled" ? "var(--status-reconciled-border)" : "var(--status-discrepancy-border)"
-                          }`,
+                            c.status === "reconciled" ? "var(--status-reconciled)" : "var(--color-brand)",
                         }}>
-                          {c.status.toUpperCase()}
+                          ● {c.status.toUpperCase()}
                         </span>
-                        <span style={{ fontSize: "11px", color: "var(--text-dim)" }}>→</span>
+                        <span style={{ color: "var(--color-brand)", fontSize: "12px" }}>→</span>
                       </div>
                     </div>
                   ))}
@@ -214,13 +207,13 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
               {matchedMerchants.length > 0 && (
                 <div>
                   <div style={{
-                    fontSize: "10px",
-                    fontWeight: 600,
+                    fontSize: "9.5px",
+                    fontWeight: 700,
                     textTransform: "uppercase",
-                    letterSpacing: "0.06em",
+                    letterSpacing: "0.08em",
                     color: "var(--text-dim)",
-                    padding: "0.35rem 1rem",
-                    borderTop: "1px solid var(--border-hairline)",
+                    padding: "0.4rem 1.25rem",
+                    borderTop: "1px solid var(--border-subtle)",
                   }}>
                     Merchants ({matchedMerchants.length})
                   </div>
@@ -229,12 +222,13 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                       key={`m_${c.case_id}`}
                       onClick={() => handleSelectCase(c.case_id)}
                       style={{
-                        padding: "0.55rem 1rem",
+                        padding: "0.6rem 1.25rem",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
                         cursor: "pointer",
-                        fontSize: "13px",
+                        fontSize: "12.5px",
+                        borderBottom: "1px solid var(--border-hairline)",
                       }}
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--bg-surface-hover)"}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
@@ -243,7 +237,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                         {c.merchant_id}
                       </span>
                       <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>
-                        View {c.case_id} →
+                        OPEN {c.case_id} →
                       </span>
                     </div>
                   ))}
@@ -255,17 +249,18 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
         {/* Footer */}
         <div style={{
-          padding: "0.45rem 1rem",
+          padding: "0.5rem 1.25rem",
           backgroundColor: "var(--bg-surface-secondary)",
           borderTop: "1px solid var(--border-subtle)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          fontSize: "11px",
+          fontSize: "10.5px",
           color: "var(--text-muted)",
+          fontFamily: "var(--font-mono)",
         }}>
-          <span>Navigate with <kbd style={{ fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>↑</kbd> <kbd style={{ fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>↓</kbd></span>
-          <span>Select with <kbd style={{ fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>↵</kbd></span>
+          <span>NAVIGATE [ ↑ ↓ ]</span>
+          <span>SELECT [ ENTER ]</span>
         </div>
       </div>
     </div>

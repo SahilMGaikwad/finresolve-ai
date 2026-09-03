@@ -124,7 +124,7 @@ export interface AuditEvent {
   event_hash: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://finresolve-ai.onrender.com";
 
 class ApiClient {
   private token: string = "dev-token-analyst";
@@ -153,7 +153,7 @@ class ApiClient {
     return res.json() as Promise<T>;
   }
 
-  async listCases(limit = 50, offset = 0): Promise<{ total: number; cases: CaseSummary[] }> {
+  async listCases(limit = 100, offset = 0): Promise<{ total: number; cases: CaseSummary[] }> {
     return this.request<{ total: number; cases: CaseSummary[] }>(`/cases?limit=${limit}&offset=${offset}`);
   }
 
@@ -161,10 +161,10 @@ class ApiClient {
     return this.request<CaseDetail>(`/cases/${caseId}`);
   }
 
-  async seedBenchmark(numCases = 50): Promise<{ status: string; count: number }> {
+  async seedBenchmark(numCases = 500): Promise<{ status: string; count: number }> {
     return this.request<{ status: string; count: number }>("/cases/seed-benchmark", {
       method: "POST",
-      body: JSON.stringify({ num_cases: numCases }),
+      body: JSON.stringify({ num_cases: numCases, seed: 42, corruption_rate: 0.15 }),
     });
   }
 
