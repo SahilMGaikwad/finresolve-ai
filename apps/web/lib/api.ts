@@ -153,7 +153,7 @@ class ApiClient {
     return res.json() as Promise<T>;
   }
 
-  async listCases(limit = 100, offset = 0): Promise<{ total: number; cases: CaseSummary[] }> {
+  async listCases(limit = 50, offset = 0): Promise<{ total: number; cases: CaseSummary[] }> {
     return this.request<{ total: number; cases: CaseSummary[] }>(`/cases?limit=${limit}&offset=${offset}`);
   }
 

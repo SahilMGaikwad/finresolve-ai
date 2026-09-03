@@ -18,7 +18,7 @@ export default function CaseExplorerPage() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const res = await api.listCases(100, 0);
+      const res = await api.listCases(50, 0);
       setCases(res.cases || []);
     } catch (e) {
       console.error(e);
