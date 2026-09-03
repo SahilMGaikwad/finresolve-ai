@@ -1,65 +1,66 @@
 :root {
-  /* FinResolve Distinctive Light FinTech Palette */
-  --bg-canvas: #f7f9fc;
-  --bg-sidebar: #ffffff;
-  --bg-header: #ffffff;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #ffffff;
-  --bg-surface-hover: #f0f4fe;
-  --bg-surface-sunken: #f8fafc;
-  --bg-input: #ffffff;
-  --bg-pill: #f1f5f9;
-  --bg-pill-active: #ffffff;
+  /* FinResolve Institutional Dark FinTech Palette */
+  --bg-canvas: #070B12;
+  --bg-sidebar: #0B111A;
+  --bg-header: #0B111A;
+  --bg-surface: #0B111A;
+  --bg-surface-secondary: #101722;
+  --bg-surface-elevated: #141C28;
+  --bg-surface-hover: #141C28;
+  --bg-surface-sunken: #070B12;
+  --bg-input: #101722;
+  --bg-pill: #101722;
+  --bg-pill-active: #141C28;
 
-  /* FinResolve Refined Borders */
-  --border-hairline: rgba(11, 18, 32, 0.04);
-  --border-subtle: #e5eaf2;
-  --border-medium: #cbd5e1;
-  --border-strong: #94a3b8;
-  --border-focus: #315cf5;
+  /* Institutional Borders */
+  --border-hairline: #182230;
+  --border-subtle: #202B3A;
+  --border-medium: #2D3B4E;
+  --border-strong: #3F5168;
+  --border-focus: #5B7CFF;
 
-  /* Deep Navy Typography */
-  --text-primary: #111827;
-  --text-secondary: #475467;
-  --text-muted: #667085;
-  --text-dim: #98a2b3;
-  --text-accent: #315cf5;
-  --text-accent-hover: #2144d4;
+  /* Typography Colors */
+  --text-primary: #F5F7FA;
+  --text-secondary: #8B98AA;
+  --text-muted: #596678;
+  --text-dim: #3D4756;
+  --text-accent: #5B7CFF;
+  --text-accent-hover: #7592FF;
 
-  /* Distinctive Semantic Colors */
-  --color-indigo: #315cf5;
-  --color-indigo-bg: #eff4ff;
-  --color-indigo-border: #bfdbfe;
+  /* Semantic State Colors */
+  --color-indigo: #5B7CFF;
+  --color-indigo-bg: rgba(91, 124, 255, 0.12);
+  --color-indigo-border: rgba(91, 124, 255, 0.28);
 
-  --color-teal: #14b8a6;
-  --color-teal-bg: #f0fdfa;
-  --color-teal-border: #99f6e4;
+  --color-teal: #19C7A5;
+  --color-teal-bg: rgba(25, 199, 165, 0.12);
+  --color-teal-border: rgba(25, 199, 165, 0.28);
 
-  --status-reconciled: #14b8a6;
-  --status-reconciled-bg: #f0fdfa;
-  --status-reconciled-border: #99f6e4;
+  --status-reconciled: #19C7A5;
+  --status-reconciled-bg: rgba(25, 199, 165, 0.12);
+  --status-reconciled-border: rgba(25, 199, 165, 0.28);
 
-  --status-discrepancy: #dc2626;
-  --status-discrepancy-bg: #fef2f2;
-  --status-discrepancy-border: #fecaca;
+  --status-discrepancy: #E05A67;
+  --status-discrepancy-bg: rgba(224, 90, 103, 0.12);
+  --status-discrepancy-border: rgba(224, 90, 103, 0.28);
 
-  --status-review: #d97706;
-  --status-review-bg: #fffbeb;
-  --status-review-border: #fde68a;
+  --status-review: #D9A441;
+  --status-review-bg: rgba(217, 164, 65, 0.12);
+  --status-review-border: rgba(217, 164, 65, 0.28);
 
-  --status-blocked: #dc2626;
-  --status-blocked-bg: #fef2f2;
-  --status-blocked-border: #fecaca;
+  --status-blocked: #E05A67;
+  --status-blocked-bg: rgba(224, 90, 103, 0.12);
+  --status-blocked-border: rgba(224, 90, 103, 0.28);
 
-  --status-info: #315cf5;
-  --status-info-bg: #eff4ff;
-  --status-info-border: #bfdbfe;
+  --status-info: #5B7CFF;
+  --status-info-bg: rgba(91, 124, 255, 0.12);
+  --status-info-border: rgba(91, 124, 255, 0.28);
 
-  /* Premium Micro-Elevations */
-  --shadow-sm: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  --shadow-card: 0 1px 3px 0 rgba(16, 24, 40, 0.06), 0 1px 2px 0 rgba(16, 24, 40, 0.04);
-  --shadow-hover: 0 4px 12px 0 rgba(49, 92, 245, 0.08), 0 2px 4px 0 rgba(16, 24, 40, 0.03);
-  --shadow-lg: 0 12px 24px -4px rgba(16, 24, 40, 0.08), 0 4px 8px -2px rgba(16, 24, 40, 0.03);
+  /* Elevation Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.45), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 4px 16px 0 rgba(0, 0, 0, 0.5), 0 2px 6px 0 rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.65), 0 4px 10px -2px rgba(0, 0, 0, 0.4);
 
   /* Fonts */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

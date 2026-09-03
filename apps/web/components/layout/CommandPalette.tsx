@@ -72,7 +72,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       style={{
         position: "fixed",
         inset: 0,
-        backgroundColor: "rgba(11, 18, 32, 0.45)",
+        backgroundColor: "rgba(7, 11, 18, 0.75)",
         backdropFilter: "blur(4px)",
         zIndex: 999,
         display: "flex",
@@ -85,10 +85,10 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       <div
         style={{
           width: "100%",
-          maxWidth: "600px",
-          backgroundColor: "#ffffff",
+          maxWidth: "580px",
+          backgroundColor: "var(--bg-surface)",
           border: "1px solid var(--border-subtle)",
-          borderRadius: "10px",
+          borderRadius: "6px",
           boxShadow: "var(--shadow-lg)",
           overflow: "hidden",
           display: "flex",
@@ -101,142 +101,171 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
           display: "flex",
           alignItems: "center",
           gap: "0.75rem",
-          padding: "0.9rem 1.15rem",
+          padding: "0.75rem 1rem",
           borderBottom: "1px solid var(--border-subtle)",
+          backgroundColor: "var(--bg-surface-secondary)",
         }}>
           <SearchIcon size={16} color="var(--text-muted)" />
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search cases (CASE-000003), merchants (merchant_0003), payments..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search cases, merchants, settlements, transactions..."
             style={{
               flex: 1,
-              background: "transparent",
+              backgroundColor: "transparent",
               border: "none",
               outline: "none",
-              color: "#111827",
-              fontSize: "14px",
+              color: "var(--text-primary)",
+              fontSize: "13.5px",
               fontFamily: "inherit",
             }}
           />
-          <button
-            onClick={onClose}
-            style={{ color: "var(--text-muted)", padding: "0.2rem" }}
-          >
-            <CloseIcon size={14} />
-          </button>
+          {query && (
+            <button onClick={() => setQuery("")} style={{ color: "var(--text-muted)", padding: "2px" }}>
+              <CloseIcon size={14} />
+            </button>
+          )}
+          <span style={{
+            fontSize: "10px",
+            fontFamily: "var(--font-mono)",
+            backgroundColor: "var(--bg-surface)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "3px",
+            padding: "0.1rem 0.35rem",
+            color: "var(--text-muted)",
+          }}>ESC</span>
         </div>
 
-        {/* Results List */}
-        <div style={{ maxHeight: "380px", overflowY: "auto", padding: "0.6rem" }}>
+        {/* Results Body */}
+        <div style={{ maxHeight: "360px", overflowY: "auto", padding: "0.5rem 0" }}>
           {isLoading ? (
-            <div style={{ padding: "2.5rem", textAlign: "center", color: "var(--text-muted)", fontSize: "13.5px" }}>
-              Searching operations store...
+            <div style={{ padding: "1.5rem", textAlign: "center", color: "var(--text-muted)", fontSize: "12.5px" }}>
+              Loading cases...
             </div>
           ) : matchedCases.length === 0 && matchedMerchants.length === 0 ? (
-            <div style={{ padding: "2.5rem", textAlign: "center", color: "var(--text-muted)", fontSize: "13.5px" }}>
-              No matching records found for &quot;{query}&quot;.
+            <div style={{ padding: "2rem", textAlign: "center", color: "var(--text-muted)", fontSize: "12.5px" }}>
+              No matches found for &quot;{query}&quot;
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              {/* Category: Cases */}
+            <>
+              {/* CASES Group */}
               {matchedCases.length > 0 && (
-                <div>
-                  <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", padding: "0.3rem 0.6rem", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                    CASES ({matchedCases.length})
+                <div style={{ marginBottom: "0.5rem" }}>
+                  <div style={{
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    color: "var(--text-dim)",
+                    padding: "0.35rem 1rem",
+                  }}>
+                    Cases ({matchedCases.length})
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-                    {matchedCases.slice(0, 8).map((c) => (
-                      <div
-                        key={c.case_id}
-                        onClick={() => handleSelectCase(c.case_id)}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "0.55rem 0.85rem",
-                          borderRadius: "6px",
-                          cursor: "pointer",
-                          transition: "background-color 0.12s ease",
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-surface-hover)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-                      >
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                          <span className="mono" style={{ fontWeight: 600, color: "#111827", fontSize: "13.5px" }}>
-                            {c.case_id}
-                          </span>
-                          <span className="mono" style={{ fontSize: "12.5px", color: "var(--text-muted)" }}>
-                            {c.merchant_id}
-                          </span>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                          <span className={`badge badge-${c.status === "reconciled" ? "reconciled" : "discrepancy"}`}>
-                            {c.status}
-                          </span>
-                          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
-                            {c.discrepancies_count} {c.discrepancies_count === 1 ? "issue" : "issues"}
-                          </span>
-                        </div>
+                  {matchedCases.slice(0, 8).map((c) => (
+                    <div
+                      key={c.case_id}
+                      onClick={() => handleSelectCase(c.case_id)}
+                      style={{
+                        padding: "0.55rem 1rem",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                        transition: "background-color 0.1s ease",
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--bg-surface-hover)"}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                        <span className="mono" style={{ fontWeight: 600, color: "var(--text-primary)" }}>
+                          {c.case_id}
+                        </span>
+                        <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                          {c.merchant_id}
+                        </span>
                       </div>
-                    ))}
-                  </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <span style={{
+                          fontSize: "10.5px",
+                          padding: "0.1rem 0.4rem",
+                          borderRadius: "3px",
+                          fontWeight: 500,
+                          backgroundColor:
+                            c.status === "reconciled" ? "var(--status-reconciled-bg)" : "var(--status-discrepancy-bg)",
+                          color:
+                            c.status === "reconciled" ? "var(--status-reconciled)" : "var(--status-discrepancy)",
+                          border: `1px solid ${
+                            c.status === "reconciled" ? "var(--status-reconciled-border)" : "var(--status-discrepancy-border)"
+                          }`,
+                        }}>
+                          {c.status.toUpperCase()}
+                        </span>
+                        <span style={{ fontSize: "11px", color: "var(--text-dim)" }}>→</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
 
-              {/* Category: Merchants */}
+              {/* MERCHANTS Group */}
               {matchedMerchants.length > 0 && (
                 <div>
-                  <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", padding: "0.3rem 0.6rem", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                    MERCHANTS ({matchedMerchants.length})
+                  <div style={{
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    color: "var(--text-dim)",
+                    padding: "0.35rem 1rem",
+                    borderTop: "1px solid var(--border-hairline)",
+                  }}>
+                    Merchants ({matchedMerchants.length})
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-                    {matchedMerchants.slice(0, 5).map((c) => (
-                      <div
-                        key={`m_${c.case_id}`}
-                        onClick={() => handleSelectCase(c.case_id)}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "0.55rem 0.85rem",
-                          borderRadius: "6px",
-                          cursor: "pointer",
-                          transition: "background-color 0.12s ease",
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-surface-hover)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-                      >
-                        <span className="mono" style={{ fontWeight: 600, color: "#315cf5", fontSize: "13px" }}>
-                          {c.merchant_id}
-                        </span>
-                        <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
-                          Linked to {c.case_id}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                  {matchedMerchants.slice(0, 4).map((c) => (
+                    <div
+                      key={`m_${c.case_id}`}
+                      onClick={() => handleSelectCase(c.case_id)}
+                      style={{
+                        padding: "0.55rem 1rem",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--bg-surface-hover)"}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                    >
+                      <span className="mono" style={{ color: "var(--text-secondary)" }}>
+                        {c.merchant_id}
+                      </span>
+                      <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                        View {c.case_id} →
+                      </span>
+                    </div>
+                  ))}
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
 
-        {/* Footer info */}
+        {/* Footer */}
         <div style={{
-          padding: "0.65rem 1rem",
-          background: "#f8fafc",
+          padding: "0.45rem 1rem",
+          backgroundColor: "var(--bg-surface-secondary)",
           borderTop: "1px solid var(--border-subtle)",
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
-          fontSize: "12px",
+          justifyContent: "space-between",
+          fontSize: "11px",
           color: "var(--text-muted)",
         }}>
-          <div>Press <span className="kbd-tag">ESC</span> to close</div>
-          <div><span className="kbd-tag">↑↓</span> to navigate <span className="kbd-tag">↵</span> to select</div>
+          <span>Navigate with <kbd style={{ fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>↑</kbd> <kbd style={{ fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>↓</kbd></span>
+          <span>Select with <kbd style={{ fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>↵</kbd></span>
         </div>
       </div>
     </div>

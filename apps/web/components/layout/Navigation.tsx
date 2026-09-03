@@ -8,16 +8,20 @@ import {
   ApprovalsIcon,
   AuditIcon,
   SystemIcon,
+  SearchIcon,
 } from "@/components/icons/Icons";
 
 export function Navigation() {
   const pathname = usePathname();
 
-  const navItems = [
+  const primaryNav = [
     { href: "/", label: "Overview", icon: OverviewIcon },
     { href: "/cases", label: "Cases", icon: CasesIcon },
     { href: "/approvals", label: "Approvals", icon: ApprovalsIcon },
     { href: "/audit", label: "Audit", icon: AuditIcon },
+  ];
+
+  const operationsNav = [
     { href: "/health", label: "System Health", icon: SystemIcon },
   ];
 
@@ -30,54 +34,52 @@ export function Navigation() {
 
   return (
     <aside style={{
-      width: "230px",
+      width: "225px",
       backgroundColor: "var(--bg-sidebar)",
       borderRight: "1px solid var(--border-subtle)",
       display: "flex",
       flexDirection: "column",
-      padding: "1.25rem 0.85rem",
+      padding: "1rem 0.75rem",
       flexShrink: 0,
       userSelect: "none",
     }}>
-      {/* FinResolve Distinctive Brand Header */}
+      {/* Brand Header */}
       <div style={{
-        padding: "0.25rem 0.5rem 1.25rem 0.5rem",
-        borderBottom: "1px solid var(--border-subtle)",
+        padding: "0.25rem 0.5rem 1rem 0.5rem",
+        borderBottom: "1px solid var(--border-hairline)",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
-          {/* Abstract Reconciliation Mark */}
           <div style={{
-            width: "30px",
-            height: "30px",
-            borderRadius: "7px",
-            backgroundColor: "#315cf5",
+            width: "28px",
+            height: "28px",
+            borderRadius: "6px",
+            backgroundColor: "var(--color-indigo)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             color: "#ffffff",
-            boxShadow: "0 2px 6px rgba(49, 92, 245, 0.3)",
           }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 6h16" />
               <path d="M4 12h10" />
               <path d="m14 18 4-4 4 4" />
             </svg>
           </div>
           <div>
-            <div style={{ fontSize: "14.5px", fontWeight: 800, letterSpacing: "-0.02em", color: "#0b1220", lineHeight: 1.1 }}>
-              FINRESOLVE
+            <div style={{ fontSize: "13.5px", fontWeight: 700, letterSpacing: "0.02em", color: "var(--text-primary)", lineHeight: 1.1 }}>
+              FINRESOLVE <span style={{ color: "var(--color-indigo)", fontSize: "11px", fontWeight: 800 }}>AI</span>
             </div>
-            <div style={{ fontSize: "11px", color: "var(--text-muted)", letterSpacing: "0.02em", marginTop: "2px", fontWeight: 500 }}>
+            <div style={{ fontSize: "10.5px", color: "var(--text-muted)", letterSpacing: "0.02em", marginTop: "2px", fontWeight: 500 }}>
               Financial Operations
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Navigation Items */}
-      <div style={{ flex: 1, overflowY: "auto", marginTop: "1.25rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-        <nav style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-          {navItems.map((item) => {
+      {/* Main Navigation */}
+      <div style={{ flex: 1, overflowY: "auto", marginTop: "1rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <nav style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+          {primaryNav.map((item) => {
             const Icon = item.icon;
             const isActive =
               pathname === item.href ||
@@ -89,32 +91,81 @@ export function Navigation() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "0.65rem",
-                  padding: "0.5rem 0.75rem",
-                  borderRadius: "6px",
-                  fontSize: "13.5px",
+                  gap: "0.6rem",
+                  padding: "0.45rem 0.65rem",
+                  borderRadius: "5px",
+                  fontSize: "13px",
                   fontWeight: isActive ? 600 : 500,
-                  color: isActive ? "#315cf5" : "var(--text-secondary)",
-                  backgroundColor: isActive ? "#eff4ff" : "transparent",
-                  borderLeft: isActive ? "3px solid #315cf5" : "3px solid transparent",
-                  transition: "all 0.15s ease",
+                  color: isActive ? "var(--text-primary)" : "var(--text-secondary)",
+                  backgroundColor: isActive ? "var(--bg-surface-elevated)" : "transparent",
+                  borderLeft: isActive ? "2px solid var(--color-indigo)" : "2px solid transparent",
+                  transition: "all 0.12s ease",
                 }}
               >
-                <Icon size={16} color={isActive ? "#315cf5" : "var(--text-muted)"} />
+                <Icon size={15} color={isActive ? "var(--color-indigo)" : "var(--text-muted)"} />
                 <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Demo Scenarios Jump */}
+        {/* Operations Section */}
         <div>
-          <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em", padding: "0 0.5rem 0.45rem" }}>
+          <div style={{
+            fontSize: "10px",
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            color: "var(--text-dim)",
+            padding: "0 0.65rem 0.4rem 0.65rem",
+          }}>
+            Operations
+          </div>
+          <nav style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+            {operationsNav.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.6rem",
+                    padding: "0.45rem 0.65rem",
+                    borderRadius: "5px",
+                    fontSize: "13px",
+                    fontWeight: isActive ? 600 : 500,
+                    color: isActive ? "var(--text-primary)" : "var(--text-secondary)",
+                    backgroundColor: isActive ? "var(--bg-surface-elevated)" : "transparent",
+                    borderLeft: isActive ? "2px solid var(--color-indigo)" : "2px solid transparent",
+                    transition: "all 0.12s ease",
+                  }}
+                >
+                  <Icon size={15} color={isActive ? "var(--color-indigo)" : "var(--text-muted)"} />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Demo Scenarios Quick Links */}
+        <div>
+          <div style={{
+            fontSize: "10px",
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            color: "var(--text-dim)",
+            padding: "0 0.65rem 0.4rem 0.65rem",
+          }}>
             Demo Scenarios
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
             {demoCases.map((c) => {
-              const isCurrent = pathname === `/cases/${c.id}`;
+              const isActive = pathname === `/cases/${c.id}`;
               return (
                 <Link
                   key={c.id}
@@ -123,17 +174,33 @@ export function Navigation() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "0.45rem 0.65rem",
-                    borderRadius: "5px",
-                    fontSize: "12.5px",
-                    background: isCurrent ? "#eff4ff" : "#ffffff",
-                    border: isCurrent ? "1px solid #bfdbfe" : "1px solid var(--border-subtle)",
-                    color: isCurrent ? "#315cf5" : "var(--text-secondary)",
-                    transition: "all 0.15s ease",
+                    padding: "0.35rem 0.65rem",
+                    borderRadius: "4px",
+                    fontSize: "11.5px",
+                    backgroundColor: isActive ? "var(--bg-surface-elevated)" : "transparent",
+                    border: isActive ? "1px solid var(--border-medium)" : "1px solid transparent",
+                    transition: "all 0.12s ease",
                   }}
                 >
-                  <span className="mono" style={{ fontWeight: 600 }}>{c.id}</span>
-                  <span className={`badge badge-${c.type}`} style={{ fontSize: "11px", padding: "0.1rem 0.35rem" }}>
+                  <span className="mono" style={{ color: isActive ? "var(--text-primary)" : "var(--text-secondary)", fontWeight: 500 }}>
+                    {c.id}
+                  </span>
+                  <span style={{
+                    fontSize: "10px",
+                    padding: "0.1rem 0.35rem",
+                    borderRadius: "3px",
+                    fontWeight: 500,
+                    backgroundColor:
+                      c.type === "reconciled" ? "var(--status-reconciled-bg)" :
+                      c.type === "review" ? "var(--status-review-bg)" : "var(--status-discrepancy-bg)",
+                    color:
+                      c.type === "reconciled" ? "var(--status-reconciled)" :
+                      c.type === "review" ? "var(--status-review)" : "var(--status-discrepancy)",
+                    border: `1px solid ${
+                      c.type === "reconciled" ? "var(--status-reconciled-border)" :
+                      c.type === "review" ? "var(--status-review-border)" : "var(--status-discrepancy-border)"
+                    }`,
+                  }}>
                     {c.label}
                   </span>
                 </Link>
@@ -143,37 +210,28 @@ export function Navigation() {
         </div>
       </div>
 
-      {/* Analyst Identity Footer */}
+      {/* User Profile Info Footer */}
       <div style={{
-        marginTop: "auto",
-        paddingTop: "1rem",
-        borderTop: "1px solid var(--border-subtle)",
+        paddingTop: "0.75rem",
+        borderTop: "1px solid var(--border-hairline)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
       }}>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0.45rem 0.65rem",
-          background: "#f8fafc",
-          borderRadius: "6px",
-          border: "1px solid var(--border-subtle)",
-        }}>
-          <div>
-            <div style={{ fontSize: "12.5px", fontWeight: 600, color: "#0b1220" }}>
-              Sahil Gaikwad
-            </div>
-            <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
-              Senior Analyst · Development
-            </div>
+        <div>
+          <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-primary)" }}>
+            Sahil Gaikwad
           </div>
-          <span style={{
-            width: "7px",
-            height: "7px",
-            borderRadius: "50%",
-            backgroundColor: "var(--status-reconciled)",
-            boxShadow: "0 0 0 2px rgba(20, 184, 166, 0.2)",
-          }} />
+          <div style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>
+            Senior Analyst • Production
+          </div>
         </div>
+        <div style={{
+          width: "7px",
+          height: "7px",
+          borderRadius: "50%",
+          backgroundColor: "var(--color-teal)",
+        }} />
       </div>
     </aside>
   );

@@ -63,7 +63,7 @@ export default function CaseExplorerPage() {
         breadcrumbs={[{ label: "FinResolve", href: "/" }, { label: "Cases" }]}
         actions={
           cases.length === 0 ? (
-            <button onClick={handleSeed} disabled={isSeeding} className="btn-primary" style={{ fontSize: "0.74rem" }}>
+            <button onClick={handleSeed} disabled={isSeeding} className="btn btn-primary btn-sm">
               <RefreshIcon size={12} />
               <span>{isSeeding ? "Seeding..." : "Load Seed 42 Benchmark"}</span>
             </button>
@@ -71,157 +71,161 @@ export default function CaseExplorerPage() {
         }
       />
 
-      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         {/* Title Bar */}
         <div>
-          <h1 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>
+          <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-indigo)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            Case Explorer
+          </div>
+          <h1 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.015em", marginTop: "2px" }}>
             Reconciliation Cases
           </h1>
-          <p style={{ fontSize: "0.76rem", color: "var(--text-muted)", marginTop: "2px" }}>
-            Canonical multi-party transaction sets loaded in working memory.
+          <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginTop: "2px" }}>
+            Canonical multi-party transaction sets loaded in active working memory.
           </p>
         </div>
 
-        {/* Compact Filter Toolbar */}
+        {/* Filter Toolbar */}
         <div style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           flexWrap: "wrap",
           gap: "0.75rem",
-          background: "#ffffff",
-          padding: "0.65rem 1rem",
-          borderRadius: "8px",
+          background: "var(--bg-surface)",
+          padding: "0.6rem 0.85rem",
+          borderRadius: "6px",
           border: "1px solid var(--border-subtle)",
-          boxShadow: "var(--shadow-card)",
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
-            <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", marginRight: "0.2rem" }}>
-              Status:
-            </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", flexWrap: "wrap" }}>
             <button
               onClick={() => setFilter("all")}
-              className={filter === "all" ? "btn-primary" : "btn-secondary"}
-              style={{ fontSize: "0.72rem", padding: "0.25rem 0.55rem" }}
+              style={{
+                padding: "0.25rem 0.6rem",
+                borderRadius: "4px",
+                fontSize: "12px",
+                fontWeight: filter === "all" ? 600 : 500,
+                backgroundColor: filter === "all" ? "var(--bg-surface-elevated)" : "transparent",
+                color: filter === "all" ? "var(--text-primary)" : "var(--text-muted)",
+                border: filter === "all" ? "1px solid var(--border-medium)" : "1px solid transparent",
+              }}
             >
               All ({cases.length})
             </button>
             <button
               onClick={() => setFilter("discrepancies")}
-              className={filter === "discrepancies" ? "btn-primary" : "btn-secondary"}
-              style={{ fontSize: "0.72rem", padding: "0.25rem 0.55rem" }}
+              style={{
+                padding: "0.25rem 0.6rem",
+                borderRadius: "4px",
+                fontSize: "12px",
+                fontWeight: filter === "discrepancies" ? 600 : 500,
+                backgroundColor: filter === "discrepancies" ? "var(--status-discrepancy-bg)" : "transparent",
+                color: filter === "discrepancies" ? "var(--status-discrepancy)" : "var(--text-muted)",
+                border: filter === "discrepancies" ? "1px solid var(--status-discrepancy-border)" : "1px solid transparent",
+              }}
             >
-              Flagged ({discrepancyCount})
+              Flagged Discrepancies ({discrepancyCount})
             </button>
             <button
               onClick={() => setFilter("clean")}
-              className={filter === "clean" ? "btn-primary" : "btn-secondary"}
-              style={{ fontSize: "0.72rem", padding: "0.25rem 0.55rem" }}
+              style={{
+                padding: "0.25rem 0.6rem",
+                borderRadius: "4px",
+                fontSize: "12px",
+                fontWeight: filter === "clean" ? 600 : 500,
+                backgroundColor: filter === "clean" ? "var(--status-reconciled-bg)" : "transparent",
+                color: filter === "clean" ? "var(--status-reconciled)" : "var(--text-muted)",
+                border: filter === "clean" ? "1px solid var(--status-reconciled-border)" : "1px solid transparent",
+              }}
             >
               Clean ({cleanCount})
             </button>
-
-            <div style={{ width: "1px", height: "16px", background: "var(--border-subtle)", margin: "0 0.35rem" }} />
-
-            <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", marginRight: "0.2rem" }}>
-              Difficulty:
-            </span>
-            {["all", "easy", "medium", "hard"].map((diff) => (
-              <button
-                key={diff}
-                onClick={() => setDifficultyFilter(diff)}
-                className={difficultyFilter === diff ? "btn-primary" : "btn-secondary"}
-                style={{ fontSize: "0.72rem", padding: "0.25rem 0.55rem", textTransform: "capitalize" }}
-              >
-                {diff}
-              </button>
-            ))}
           </div>
 
-          <div>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <input
               type="text"
-              placeholder="Filter by Case ID or Merchant ID..."
+              placeholder="Filter by ID or Merchant..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-control"
-              style={{ width: "260px" }}
+              className="input"
+              style={{ width: "200px" }}
             />
           </div>
         </div>
 
-        {/* Dense Cases Table */}
-        <div className="surface" style={{ overflow: "hidden" }}>
-          {isLoading ? (
-            <div style={{ padding: "3rem", textAlign: "center", color: "var(--text-muted)", fontSize: "0.8rem" }}>
-              Loading cases...
-            </div>
-          ) : cases.length === 0 ? (
-            <div style={{ padding: "3rem 1.5rem", textAlign: "center" }}>
-              <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f172a" }}>No Cases in Memory</div>
-              <p style={{ fontSize: "0.76rem", color: "var(--text-muted)", margin: "0.35rem auto 1.25rem", maxWidth: "400px" }}>
-                Load the controlled Seed 42 synthetic benchmark to populate cases.
-              </p>
-              <button onClick={handleSeed} disabled={isSeeding} className="btn-primary">
-                {isSeeding ? "Loading..." : "Load Seed 42 Benchmark"}
-              </button>
-            </div>
-          ) : (
-            <div style={{ overflowX: "auto" }}>
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Case ID</th>
-                    <th>Merchant ID</th>
-                    <th>Difficulty</th>
-                    <th>Records Breakdown</th>
-                    <th>Discrepancy Symptoms</th>
-                    <th>Reconciliation Status</th>
-                    <th style={{ textAlign: "right" }}>Action</th>
+        {/* Cases Table */}
+        <div className="table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Case ID</th>
+                <th>Merchant</th>
+                <th>Difficulty</th>
+                <th>Discrepancies</th>
+                <th>Status</th>
+                <th style={{ textAlign: "right" }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
+                    Loading cases...
+                  </td>
+                </tr>
+              ) : filteredCases.length === 0 ? (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
+                    No matching cases found.
+                  </td>
+                </tr>
+              ) : (
+                filteredCases.map((c) => (
+                  <tr key={c.case_id}>
+                    <td className="mono" style={{ fontWeight: 600 }}>
+                      <Link href={`/cases/${c.case_id}`} style={{ color: "var(--text-primary)" }}>
+                        {c.case_id}
+                      </Link>
+                    </td>
+                    <td className="mono" style={{ color: "var(--text-secondary)" }}>
+                      {c.merchant_id}
+                    </td>
+                    <td>
+                      <span style={{
+                        fontSize: "11px",
+                        textTransform: "capitalize",
+                        padding: "0.15rem 0.45rem",
+                        borderRadius: "3px",
+                        backgroundColor: "var(--bg-surface-secondary)",
+                        color: "var(--text-secondary)",
+                        border: "1px solid var(--border-subtle)",
+                      }}>
+                        {c.difficulty}
+                      </span>
+                    </td>
+                    <td>
+                      <DiscrepancyBadge count={c.discrepancies_count} status={c.status} />
+                    </td>
+                    <td>
+                      <span className={`badge badge-${c.status === "reconciled" ? "reconciled" : "discrepancy"}`} style={{ fontSize: "10.5px" }}>
+                        {c.status.toUpperCase()}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: "right" }}>
+                      <Link
+                        href={`/cases/${c.case_id}`}
+                        className="btn btn-primary btn-sm"
+                        style={{ fontSize: "11.5px", padding: "0.25rem 0.6rem" }}
+                      >
+                        Review Case →
+                      </Link>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {filteredCases.map((c) => (
-                    <tr key={c.case_id}>
-                      <td className="mono" style={{ fontWeight: 700 }}>
-                        <Link href={`/cases/${c.case_id}`} style={{ color: "#2563eb" }}>
-                          {c.case_id}
-                        </Link>
-                      </td>
-                      <td className="mono" style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-                        {c.merchant_id}
-                      </td>
-                      <td>
-                        <span className="badge badge-info" style={{ fontSize: "0.62rem" }}>
-                          {c.difficulty}
-                        </span>
-                      </td>
-                      <td className="mono" style={{ fontSize: "0.75rem" }}>
-                        {c.payments_count} payments, {c.settlements_count} settlements
-                      </td>
-                      <td>
-                        <DiscrepancyBadge count={c.discrepancies_count} />
-                      </td>
-                      <td>
-                        <span className={`badge badge-${c.status === "reconciled" ? "reconciled" : "discrepancy"}`}>
-                          {c.status}
-                        </span>
-                      </td>
-                      <td style={{ textAlign: "right" }}>
-                        <Link
-                          href={`/cases/${c.case_id}`}
-                          className="btn-secondary"
-                          style={{ fontSize: "0.74rem", padding: "0.25rem 0.55rem" }}
-                        >
-                          Workstation <ArrowRightIcon size={11} />
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

@@ -33,21 +33,44 @@ export default function AuditPage() {
       <Header
         breadcrumbs={[{ label: "FinResolve", href: "/" }, { label: "Audit" }]}
         actions={
-          <button onClick={loadAuditData} disabled={isLoading} className="btn-secondary" style={{ fontSize: "0.74rem" }}>
+          <button onClick={loadAuditData} disabled={isLoading} className="btn btn-secondary btn-sm">
             <RefreshIcon size={12} />
             <span>{isLoading ? "Verifying..." : "Verify Hash Chain"}</span>
           </button>
         }
       />
 
-      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <div>
-          <h1 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>
-            Cryptographic Audit Ledger
-          </h1>
-          <p style={{ fontSize: "0.76rem", color: "var(--text-muted)", marginTop: "2px" }}>
-            Append-only event log with SHA-256 backwards hash-pointer verification across all reconciliation and simulation events.
-          </p>
+      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        {/* Title Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <div>
+            <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-indigo)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              Compliance & Security Console
+            </div>
+            <h1 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.015em", marginTop: "2px" }}>
+              Audit Integrity Ledger
+            </h1>
+            <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginTop: "2px" }}>
+              Append-only event log with SHA-256 backwards hash-pointer verification across all reconciliation, simulation, and approval events.
+            </p>
+          </div>
+
+          {/* Status Badge */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.6rem",
+            padding: "0.4rem 0.85rem",
+            backgroundColor: isTamperFree ? "var(--status-reconciled-bg)" : "var(--status-discrepancy-bg)",
+            border: `1px solid ${isTamperFree ? "var(--status-reconciled-border)" : "var(--status-discrepancy-border)"}`,
+            borderRadius: "5px",
+            fontSize: "12px",
+            color: isTamperFree ? "var(--status-reconciled)" : "var(--status-discrepancy)",
+            fontWeight: 600,
+          }}>
+            <span>●</span>
+            <span>{isTamperFree ? "HASH CHAIN VERIFIED (tamper_free: true)" : "TAMPERING DETECTED"}</span>
+          </div>
         </div>
 
         {/* Audit Timeline Table */}

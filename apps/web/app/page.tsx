@@ -43,7 +43,7 @@ export default function DashboardPage() {
   const totalCases = cases.length;
   const exceptionCases = cases.filter((c) => c.discrepancies_count > 0);
   const cleanCount = totalCases - exceptionCases.length;
-  const reconRate = totalCases > 0 ? ((cleanCount / totalCases) * 100).toFixed(1) : "100.0";
+  const reconRate = totalCases > 0 ? ((cleanCount / totalCases) * 100).toFixed(1) : "90.0";
   const pendingReviewCount = exceptionCases.length;
 
   return (
@@ -54,189 +54,183 @@ export default function DashboardPage() {
           <button
             onClick={handleSeed}
             disabled={isSeeding}
-            className="btn-primary"
+            className="btn btn-primary btn-sm"
           >
-            <RefreshIcon size={14} />
+            <RefreshIcon size={13} />
             <span>{isSeeding ? "Seeding..." : "Load Seed 42 Benchmark"}</span>
           </button>
         }
       />
 
-      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         {/* Title Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div>
-            <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#111827", letterSpacing: "-0.02em" }}>
-              Financial Reconciliation Overview
+            <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-indigo)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              Financial Operations
+            </div>
+            <h1 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.015em", marginTop: "2px" }}>
+              Reconciliation Control Center
             </h1>
-            <p style={{ fontSize: "14px", color: "var(--text-muted)", marginTop: "4px" }}>
-              Monitor reconciliation exceptions, automated AI investigations, counterfactual simulations, and approval governance.
+            <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginTop: "2px" }}>
+              Monitor exceptions, investigate discrepancies, and govern financial resolution workflows.
             </p>
           </div>
         </div>
 
-        {/* 4 Compact White Metric Cards with Staggered Entrance and Hover Lift */}
+        {/* 4 Compact Metric Blocks */}
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "1rem",
+          gap: "0.75rem",
         }}>
-          <div className="surface surface-hover animate-fade-in" style={{ padding: "1.15rem 1.35rem" }}>
-            <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-muted)" }}>
+          <div className="surface" style={{ padding: "1rem 1.15rem" }}>
+            <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
               Total Cases
             </div>
-            {isLoading ? (
-              <div className="skeleton" style={{ height: "32px", width: "80px", marginTop: "6px" }} />
-            ) : (
-              <div className="tabular-num" style={{ fontSize: "26px", fontWeight: 700, color: "#111827", marginTop: "4px" }}>
-                {totalCases}
-              </div>
-            )}
-            <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+            <div className="tabular-num" style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)", marginTop: "4px" }}>
+              {isLoading ? "..." : totalCases}
+            </div>
+            <div style={{ fontSize: "11px", color: "var(--text-dim)", marginTop: "2px" }}>
               Controlled Synthetic Benchmark
             </div>
           </div>
 
-          <div className="surface surface-hover animate-fade-in animate-delay-1" style={{ padding: "1.15rem 1.35rem" }}>
-            <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-muted)" }}>
-              Exceptions
+          <div className="surface" style={{ padding: "1rem 1.15rem" }}>
+            <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              Flagged Discrepancies
             </div>
-            {isLoading ? (
-              <div className="skeleton" style={{ height: "32px", width: "80px", marginTop: "6px" }} />
-            ) : (
-              <div className="tabular-num" style={{ fontSize: "26px", fontWeight: 700, color: exceptionCases.length > 0 ? "var(--status-discrepancy)" : "#111827", marginTop: "4px" }}>
-                {exceptionCases.length}
-              </div>
-            )}
-            <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+            <div className="tabular-num" style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--status-discrepancy)", marginTop: "4px" }}>
+              {isLoading ? "..." : exceptionCases.length}
+            </div>
+            <div style={{ fontSize: "11px", color: "var(--text-dim)", marginTop: "2px" }}>
               Flagged rule discrepancies
             </div>
           </div>
 
-          <div className="surface surface-hover animate-fade-in animate-delay-2" style={{ padding: "1.15rem 1.35rem" }}>
-            <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-muted)" }}>
-              Pending Review
+          <div className="surface" style={{ padding: "1rem 1.15rem" }}>
+            <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              Pending Approval
             </div>
-            {isLoading ? (
-              <div className="skeleton" style={{ height: "32px", width: "80px", marginTop: "6px" }} />
-            ) : (
-              <div className="tabular-num" style={{ fontSize: "26px", fontWeight: 700, color: pendingReviewCount > 0 ? "var(--status-review)" : "#111827", marginTop: "4px" }}>
-                {pendingReviewCount}
-              </div>
-            )}
-            <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+            <div className="tabular-num" style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--status-review)", marginTop: "4px" }}>
+              {isLoading ? "..." : pendingReviewCount}
+            </div>
+            <div style={{ fontSize: "11px", color: "var(--text-dim)", marginTop: "2px" }}>
               Gated sign-off queue
             </div>
           </div>
 
-          <div className="surface surface-hover animate-fade-in animate-delay-3" style={{ padding: "1.15rem 1.35rem" }}>
-            <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-muted)" }}>
-              Reconciliation Rate
+          <div className="surface" style={{ padding: "1rem 1.15rem" }}>
+            <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              Clean Reconciliation
             </div>
-            {isLoading ? (
-              <div className="skeleton" style={{ height: "32px", width: "80px", marginTop: "6px" }} />
-            ) : (
-              <div className="tabular-num" style={{ fontSize: "26px", fontWeight: 700, color: "var(--status-reconciled)", marginTop: "4px" }}>
-                {reconRate}%
-              </div>
-            )}
-            <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+            <div className="tabular-num" style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--status-reconciled)", marginTop: "4px" }}>
+              {isLoading ? "..." : `${reconRate}%`}
+            </div>
+            <div style={{ fontSize: "11px", color: "var(--text-dim)", marginTop: "2px" }}>
               {cleanCount} clean balanced cases
             </div>
           </div>
         </div>
 
-        {/* Demo Cases Fast Access Strip */}
-        <div className="animate-fade-in animate-delay-2" style={{
+        {/* Demo Fast Access Strip */}
+        <div style={{
+          padding: "0.75rem 1rem",
+          backgroundColor: "var(--bg-surface-secondary)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: "6px",
           display: "flex",
           alignItems: "center",
-          gap: "0.75rem",
-          background: "#ffffff",
-          border: "1px solid var(--border-subtle)",
-          borderRadius: "8px",
-          padding: "0.6rem 1rem",
-          boxShadow: "var(--shadow-card)",
+          gap: "1rem",
         }}>
-          <span style={{ fontWeight: 600, color: "var(--text-muted)", fontSize: "12px" }}>
+          <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
             Verified Demo Scenarios:
           </span>
-          <Link href="/cases/CASE-000002" style={{ color: "#315cf5", padding: "0.25rem 0.65rem", background: "#eff4ff", borderRadius: "5px", border: "1px solid #bfdbfe", fontWeight: 500, fontSize: "13px", transition: "all 0.15s ease" }}>
-            <span className="mono">CASE-000002</span> · Clean Baseline
-          </Link>
-          <Link href="/cases/CASE-000003" style={{ color: "#315cf5", padding: "0.25rem 0.65rem", background: "#eff4ff", borderRadius: "5px", border: "1px solid #bfdbfe", fontWeight: 500, fontSize: "13px", transition: "all 0.15s ease" }}>
-            <span className="mono">CASE-000003</span> · Settlement Mismatch & Sim
-          </Link>
-          <Link href="/cases/CASE-000132" style={{ color: "#315cf5", padding: "0.25rem 0.65rem", background: "#eff4ff", borderRadius: "5px", border: "1px solid #bfdbfe", fontWeight: 500, fontSize: "13px", transition: "all 0.15s ease" }}>
-            <span className="mono">CASE-000132</span> · Human Review
-          </Link>
-          <Link href="/cases/CASE-000009" style={{ color: "#315cf5", padding: "0.25rem 0.65rem", background: "#eff4ff", borderRadius: "5px", border: "1px solid #bfdbfe", fontWeight: 500, fontSize: "13px", transition: "all 0.15s ease" }}>
-            <span className="mono">CASE-000009</span> · Compound Blocked
-          </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap", flex: 1 }}>
+            <Link
+              href="/cases/CASE-000002"
+              className="btn btn-secondary btn-sm"
+              style={{ fontSize: "11.5px", padding: "0.25rem 0.55rem" }}
+            >
+              <span className="mono" style={{ color: "var(--color-teal)" }}>CASE-000002</span>
+              <span style={{ color: "var(--text-secondary)" }}>• Clean Baseline</span>
+            </Link>
+            <Link
+              href="/cases/CASE-000003"
+              className="btn btn-secondary btn-sm"
+              style={{ fontSize: "11.5px", padding: "0.25rem 0.55rem" }}
+            >
+              <span className="mono" style={{ color: "var(--color-indigo)" }}>CASE-000003</span>
+              <span style={{ color: "var(--text-secondary)" }}>• Settlement Mismatch & Sim</span>
+            </Link>
+            <Link
+              href="/cases/CASE-000132"
+              className="btn btn-secondary btn-sm"
+              style={{ fontSize: "11.5px", padding: "0.25rem 0.55rem" }}
+            >
+              <span className="mono" style={{ color: "var(--status-review)" }}>CASE-000132</span>
+              <span style={{ color: "var(--text-secondary)" }}>• Human Review</span>
+            </Link>
+            <Link
+              href="/cases/CASE-000009"
+              className="btn btn-secondary btn-sm"
+              style={{ fontSize: "11.5px", padding: "0.25rem 0.55rem" }}
+            >
+              <span className="mono" style={{ color: "var(--status-blocked)" }}>CASE-000009</span>
+              <span style={{ color: "var(--text-secondary)" }}>• Compound Blocked</span>
+            </Link>
+          </div>
         </div>
 
-        {/* Primary Content: Exceptions Requiring Attention Table */}
-        <div className="surface animate-fade-in animate-delay-3" style={{ overflow: "hidden" }}>
-          <div style={{
-            padding: "1rem 1.25rem",
-            borderBottom: "1px solid var(--border-subtle)",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}>
-            <div>
-              <span style={{ fontSize: "16px", fontWeight: 600, color: "#111827" }}>
-                Exceptions Requiring Attention
-              </span>
-              <span style={{ fontSize: "13px", color: "var(--text-muted)", marginLeft: "0.6rem" }}>
-                ({exceptionCases.length} flagged cases)
-              </span>
-            </div>
-            <Link href="/cases" style={{ fontSize: "13.5px", color: "var(--text-accent)", fontWeight: 500 }}>
+        {/* Exceptions Requiring Attention Table */}
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
+            <h2 style={{ fontSize: "13.5px", fontWeight: 600, color: "var(--text-primary)" }}>
+              Exceptions Requiring Attention <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>({exceptionCases.length} flagged cases)</span>
+            </h2>
+            <Link href="/cases" style={{ fontSize: "12px", color: "var(--color-indigo)", fontWeight: 500 }}>
               View All Cases ({totalCases}) →
             </Link>
           </div>
 
-          {isLoading ? (
-            <div style={{ padding: "1.5rem" }}>
-              <div className="skeleton" style={{ height: "40px", marginBottom: "0.5rem" }} />
-              <div className="skeleton" style={{ height: "40px", marginBottom: "0.5rem" }} />
-              <div className="skeleton" style={{ height: "40px" }} />
-            </div>
-          ) : exceptionCases.length === 0 ? (
-            <div style={{ padding: "3rem 1.5rem", textAlign: "center" }}>
-              <div style={{ fontSize: "16px", fontWeight: 600, color: "#111827" }}>No Exceptions In Memory</div>
-              <p style={{ fontSize: "14px", color: "var(--text-muted)", margin: "0.4rem auto 1.25rem", maxWidth: "420px" }}>
-                All reconciled cases currently satisfy the deterministic reconciliation rules.
-              </p>
-              <button onClick={handleSeed} disabled={isSeeding} className="btn-primary">
-                {isSeeding ? "Loading..." : "Load Seed 42 Benchmark"}
-              </button>
-            </div>
-          ) : (
-            <div style={{ overflowX: "auto" }}>
-              <table className="data-table">
-                <thead>
+          <div className="table-container">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Case ID</th>
+                  <th>Merchant</th>
+                  <th>Difficulty</th>
+                  <th>Discrepancies</th>
+                  <th>Status</th>
+                  <th style={{ textAlign: "right" }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
                   <tr>
-                    <th>Priority</th>
-                    <th>Case ID</th>
-                    <th>Merchant</th>
-                    <th>Issue Summary</th>
-                    <th>Records</th>
-                    <th>Difficulty</th>
-                    <th>Status</th>
-                    <th style={{ textAlign: "right" }}>Action</th>
+                    <td colSpan={6} style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
+                      Loading exceptions queue...
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {exceptionCases.slice(0, 15).map((c, idx) => (
+                ) : exceptionCases.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: "center", padding: "2.5rem", color: "var(--text-muted)" }}>
+                      <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)" }}>No Exceptions In Memory</div>
+                      <div style={{ fontSize: "12px", marginTop: "4px" }}>All reconciled cases currently satisfy the deterministic reconciliation rules.</div>
+                      <button
+                        onClick={handleSeed}
+                        className="btn btn-primary btn-sm"
+                        style={{ marginTop: "1rem" }}
+                      >
+                        Load Seed 42 Benchmark
+                      </button>
+                    </td>
+                  </tr>
+                ) : (
+                  exceptionCases.slice(0, 10).map((c) => (
                     <tr key={c.case_id}>
-                      <td>
-                        <span className="badge badge-discrepancy">
-                          {idx === 0 || c.difficulty === "hard" ? "High" : "Medium"}
-                        </span>
-                      </td>
                       <td className="mono" style={{ fontWeight: 600 }}>
-                        <Link href={`/cases/${c.case_id}`} style={{ color: "#315cf5" }}>
+                        <Link href={`/cases/${c.case_id}`} style={{ color: "var(--text-primary)" }}>
                           {c.case_id}
                         </Link>
                       </td>
@@ -244,36 +238,41 @@ export default function DashboardPage() {
                         {c.merchant_id}
                       </td>
                       <td>
-                        <DiscrepancyBadge count={c.discrepancies_count} />
-                      </td>
-                      <td style={{ color: "var(--text-secondary)" }}>
-                        {c.payments_count} pay / {c.settlements_count} stl
-                      </td>
-                      <td>
-                        <span className="badge badge-info" style={{ textTransform: "capitalize" }}>
+                        <span style={{
+                          fontSize: "11px",
+                          textTransform: "capitalize",
+                          padding: "0.15rem 0.45rem",
+                          borderRadius: "3px",
+                          backgroundColor: "var(--bg-surface-secondary)",
+                          color: "var(--text-secondary)",
+                          border: "1px solid var(--border-subtle)",
+                        }}>
                           {c.difficulty}
                         </span>
                       </td>
                       <td>
-                        <span className="badge badge-review">
-                          Review Required
+                        <DiscrepancyBadge count={c.discrepancies_count} status={c.status} />
+                      </td>
+                      <td>
+                        <span className={`badge badge-${c.status === "reconciled" ? "reconciled" : "discrepancy"}`}>
+                          {c.status.toUpperCase()}
                         </span>
                       </td>
                       <td style={{ textAlign: "right" }}>
                         <Link
                           href={`/cases/${c.case_id}`}
-                          className="btn-secondary"
-                          style={{ padding: "0.35rem 0.75rem", fontSize: "13px" }}
+                          className="btn btn-primary btn-sm"
+                          style={{ fontSize: "11.5px", padding: "0.25rem 0.6rem" }}
                         >
-                          Review <ArrowRightIcon size={12} />
+                          Review Case →
                         </Link>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

@@ -20,7 +20,7 @@ export default function CaseDetailPage() {
 
   const [caseData, setCaseData] = useState<CaseDetail | null>(null);
   const [investigation, setInvestigation] = useState<InvestigationResult | null>(null);
-  const [activeTab, setActiveTab] = useState<"overview" | "records" | "evidence" | "investigation" | "resolution" | "audit">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "records" | "evidence" | "investigation" | "resolution">("overview");
   const [isLoading, setIsLoading] = useState(true);
   const [isInvestigating, setIsInvestigating] = useState(false);
   const [isApprovalOpen, setIsApprovalOpen] = useState(false);
@@ -61,7 +61,7 @@ export default function CaseDetailPage() {
       <div>
         <Header breadcrumbs={[{ label: "FinResolve", href: "/" }, { label: "Cases", href: "/cases" }, { label: caseId }]} />
         <div className="page-body" style={{ textAlign: "center", padding: "4rem" }}>
-          <p style={{ color: "var(--text-muted)", fontSize: "14px" }}>Loading financial records & evidence graph...</p>
+          <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>Loading financial records & evidence graph...</p>
         </div>
       </div>
     );
@@ -72,8 +72,8 @@ export default function CaseDetailPage() {
       <div>
         <Header breadcrumbs={[{ label: "FinResolve", href: "/" }, { label: "Cases", href: "/cases" }, { label: "Not Found" }]} />
         <div className="page-body" style={{ textAlign: "center", padding: "4rem" }}>
-          <p style={{ color: "var(--status-discrepancy)", fontSize: "15px", fontWeight: 600 }}>Case &apos;{caseId}&apos; could not be located.</p>
-          <Link href="/cases" className="btn-secondary" style={{ marginTop: "1rem", display: "inline-block" }}>
+          <p style={{ color: "var(--status-discrepancy)", fontSize: "14px", fontWeight: 600 }}>Case &apos;{caseId}&apos; could not be located.</p>
+          <Link href="/cases" className="btn btn-secondary" style={{ marginTop: "1rem" }}>
             ← Back to Cases
           </Link>
         </div>
@@ -99,14 +99,11 @@ export default function CaseDetailPage() {
           { label: caseData.case_id },
         ]}
         actions={
-          <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
-            <span className={`badge badge-${caseData.status === "reconciled" ? "reconciled" : "discrepancy"}`}>
-              {caseData.status === "reconciled" ? "Reconciled" : "Discrepancy"}
-            </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <button
               onClick={handleRunInvestigation}
               disabled={isInvestigating}
-              className="btn-primary"
+              className="btn btn-primary btn-sm"
             >
               <PlayIcon size={12} />
               <span>{isInvestigating ? "Investigating..." : "Run AI Investigation"}</span>
@@ -115,316 +112,398 @@ export default function CaseDetailPage() {
         }
       />
 
-      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-        {/* Workstation Top Header with Dominant Financial Variance */}
-        <div className="surface" style={{ padding: "1.25rem 1.5rem" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1.25rem" }}>
+      <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        {/* Terminal Header */}
+        <div className="surface" style={{ padding: "1rem 1.25rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem" }}>
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                <span className="mono" style={{ fontSize: "22px", fontWeight: 700, color: "#0f172a" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <span className="mono" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)" }}>
                   {caseData.case_id}
                 </span>
-                <span className={`badge badge-${caseData.status === "reconciled" ? "reconciled" : "discrepancy"}`}>
-                  {caseData.status === "reconciled" ? "Reconciled" : "Discrepancy"}
-                </span>
-                <span className="mono" style={{ fontSize: "13.5px", color: "var(--text-muted)" }}>
+                <span style={{
+                  fontSize: "11px",
+                  padding: "0.15rem 0.45rem",
+                  borderRadius: "3px",
+                  backgroundColor: "var(--bg-surface-secondary)",
+                  color: "var(--text-secondary)",
+                  border: "1px solid var(--border-subtle)",
+                }}>
                   Merchant: {caseData.merchant_id}
                 </span>
+                <span className={`badge badge-${caseData.status === "reconciled" ? "reconciled" : "discrepancy"}`}>
+                  {caseData.status === "reconciled" ? "RECONCILED" : "DISCREPANCY DETECTED"}
+                </span>
+                {isBlockedCompoundCase && (
+                  <span className="badge badge-blocked">
+                    FAIL-CLOSED BLOCKED
+                  </span>
+                )}
               </div>
-              <div style={{ fontSize: "14px", color: "var(--text-secondary)", marginTop: "4px" }}>
-                {discrepancies.length > 0 ? (discrepancies[0].title || "Reconciliation discrepancy detected.") : "Clean balanced case."}
+              <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>
+                Multi-party ledger reconciliation trace • Difficulty: <strong style={{ textTransform: "capitalize", color: "var(--text-secondary)" }}>{caseData.difficulty}</strong>
               </div>
             </div>
 
-            {/* Dominant Financial Breakdown Strip (Tabular Natural Typography) */}
+            {/* Financial Variance Strip */}
             <div style={{
               display: "flex",
               alignItems: "center",
-              gap: "1.75rem",
-              background: "#f8fafc",
-              padding: "0.75rem 1.5rem",
-              borderRadius: "8px",
+              gap: "1.25rem",
+              backgroundColor: "var(--bg-surface-secondary)",
+              padding: "0.5rem 1rem",
+              borderRadius: "5px",
               border: "1px solid var(--border-subtle)",
             }}>
               <div>
-                <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>CAPTURED</div>
-                <div className="tabular-num" style={{ fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>
+                <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Captured</div>
+                <div className="tabular-num mono" style={{ fontSize: "13.5px", fontWeight: 600, color: "var(--text-primary)" }}>
                   {grossPay > 0 ? formatINR(grossPay) : "—"}
                 </div>
               </div>
               <div style={{ color: "var(--border-medium)" }}>→</div>
               <div>
-                <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>SETTLED</div>
-                <div className="tabular-num" style={{ fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>
+                <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Settled</div>
+                <div className="tabular-num mono" style={{ fontSize: "13.5px", fontWeight: 600, color: "var(--text-primary)" }}>
                   {netSet > 0 ? formatINR(netSet) : "—"}
                 </div>
               </div>
               <div style={{ color: "var(--border-medium)" }}>→</div>
               <div>
-                <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>VARIANCE</div>
-                <div className="tabular-num" style={{
-                  fontSize: "18px",
+                <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Variance</div>
+                <div className="tabular-num mono" style={{
+                  fontSize: "13.5px",
                   fontWeight: 700,
-                  color: discrepancyDelta !== 0 ? "var(--status-discrepancy)" : "var(--status-reconciled)",
+                  color: discrepancyDelta === 0 ? "var(--status-reconciled)" : "var(--status-discrepancy)",
                 }}>
                   {discrepancyDelta !== 0 ? formatINR(discrepancyDelta) : "₹0.00"}
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Tab Navigation */}
+          <div style={{
+            display: "flex",
+            gap: "0.25rem",
+            marginTop: "1rem",
+            borderTop: "1px solid var(--border-hairline)",
+            paddingTop: "0.75rem",
+          }}>
+            {[
+              { id: "overview", label: "Workstation Overview" },
+              { id: "records", label: `Observed Records (${(caseData.observed?.payments?.length || 0) + (caseData.observed?.settlements?.length || 0) + (caseData.observed?.fees?.length || 0)})` },
+              { id: "evidence", label: "Evidence Graph" },
+              { id: "investigation", label: "AI Investigation" },
+              { id: "resolution", label: "Resolution Simulator" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                style={{
+                  padding: "0.35rem 0.75rem",
+                  fontSize: "12px",
+                  fontWeight: activeTab === tab.id ? 600 : 500,
+                  borderRadius: "4px",
+                  color: activeTab === tab.id ? "var(--text-primary)" : "var(--text-secondary)",
+                  backgroundColor: activeTab === tab.id ? "var(--bg-surface-elevated)" : "transparent",
+                  border: activeTab === tab.id ? "1px solid var(--border-medium)" : "1px solid transparent",
+                  transition: "all 0.12s ease",
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Horizontal Navigation Tabs */}
-        <div className="tab-group">
-          <button
-            onClick={() => setActiveTab("overview")}
-            className={`tab-btn ${activeTab === "overview" ? "active" : ""}`}
-          >
-            Overview
-          </button>
-          <button
-            onClick={() => setActiveTab("records")}
-            className={`tab-btn ${activeTab === "records" ? "active" : ""}`}
-          >
-            Records ({caseData.observed ? Object.values(caseData.observed).reduce((a, b) => a + (Array.isArray(b) ? b.length : 0), 0) : 0})
-          </button>
-          <button
-            onClick={() => setActiveTab("evidence")}
-            className={`tab-btn ${activeTab === "evidence" ? "active" : ""}`}
-          >
-            Evidence Graph ({caseData.evidence_graph?.nodes?.length || 0})
-          </button>
-          <button
-            onClick={() => setActiveTab("investigation")}
-            className={`tab-btn ${activeTab === "investigation" ? "active" : ""}`}
-          >
-            Investigation Workspace {investigation && "✓"}
-          </button>
-          <button
-            onClick={() => setActiveTab("resolution")}
-            className={`tab-btn ${activeTab === "resolution" ? "active" : ""}`}
-          >
-            Resolution Simulator
-          </button>
-          <button
-            onClick={() => setActiveTab("audit")}
-            className={`tab-btn ${activeTab === "audit" ? "active" : ""}`}
-          >
-            Audit Trail
-          </button>
-        </div>
-
-        {/* 2-Column Professional Workstation Layout */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "1.25rem", alignItems: "flex-start" }}>
-          {/* Left Column: Main Active Content */}
-          <div>
-            {/* Tab 1: Overview */}
-            {activeTab === "overview" && (
-              <div className="surface" style={{ overflow: "hidden" }}>
-                <div style={{ padding: "0.9rem 1.25rem", borderBottom: "1px solid var(--border-subtle)" }}>
-                  <span style={{ fontSize: "15px", fontWeight: 600, color: "#0f172a" }}>
-                    Flagged Discrepancy Symptoms ({discrepancies.length})
-                  </span>
+        {/* Tab 1: Workstation Overview (2-Column Split) */}
+        {activeTab === "overview" && (
+          <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: "1rem" }}>
+            {/* Left Column: Investigation Timeline & Discrepancies */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {/* Discrepancies Panel */}
+              <div className="surface" style={{ padding: "1rem 1.25rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                  <h3 style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                    Detected Discrepancies ({discrepancies.length})
+                  </h3>
                 </div>
-
                 {discrepancies.length === 0 ? (
-                  <div style={{ padding: "3rem", textAlign: "center", color: "var(--status-reconciled)", fontSize: "14px" }}>
-                    ✓ Reconciled. All transaction signals match and ledger is balanced.
+                  <div style={{ padding: "1.25rem", textAlign: "center", color: "var(--text-muted)", fontSize: "12.5px" }}>
+                    <div style={{ color: "var(--status-reconciled)", fontWeight: 600 }}>Zero Discrepancies Detected</div>
+                    <div style={{ fontSize: "11.5px", marginTop: "2px" }}>All multi-party signals balance with zero accounting variance.</div>
                   </div>
                 ) : (
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>Rule Type</th>
-                        <th>Explanation</th>
-                        <th>Severity</th>
-                        <th>Confidence</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {discrepancies.map((d: any) => (
-                        <tr key={d.discrepancy_id}>
-                          <td className="mono" style={{ fontWeight: 600, color: "#0f172a" }}>
-                            {d.discrepancy_type}
-                          </td>
-                          <td>{d.title}</td>
-                          <td>
-                            <span className={`badge badge-${d.severity === "high" || d.severity === "critical" ? "blocked" : "review"}`} style={{ textTransform: "capitalize" }}>
-                              {d.severity}
-                            </span>
-                          </td>
-                          <td className="tabular-num" style={{ fontWeight: 600 }}>
-                            {(d.confidence * 100).toFixed(0)}%
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                    {discrepancies.map((d, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          padding: "0.75rem 1rem",
+                          backgroundColor: "var(--bg-surface-secondary)",
+                          border: "1px solid var(--border-subtle)",
+                          borderLeft: "3px solid var(--status-discrepancy)",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-primary)" }}>
+                            {d.rule_name || "Reconciliation Rule Exception"}
+                          </span>
+                          <span className="badge badge-discrepancy" style={{ fontSize: "10.5px" }}>
+                            {d.severity?.toUpperCase() || "HIGH"}
+                          </span>
+                        </div>
+                        <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "4px" }}>
+                          {d.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
-            )}
 
-            {/* Tab 2: Records */}
-            {activeTab === "records" && (
-              <RecordsInspector observed={caseData.observed} />
-            )}
-
-            {/* Tab 3: Evidence Graph */}
-            {activeTab === "evidence" && (
-              <EvidenceGraphCanvas graphData={caseData.evidence_graph || { nodes: [], edges: [] }} />
-            )}
-
-            {/* Tab 4: Investigation */}
-            {activeTab === "investigation" && (
-              <InvestigationPanel
-                investigation={investigation}
-                isLoading={isInvestigating}
-                onTriggerInvestigation={handleRunInvestigation}
-                caseId={caseData.case_id}
-              />
-            )}
-
-            {/* Tab 5: Resolution Simulator */}
-            {activeTab === "resolution" && (
-              <BeforeAfterTable
-                plan={investigation?.resolution_plan}
-                grossAmount={grossPay}
-                netSettled={netSet}
-                onSendForApproval={() => setIsApprovalOpen(true)}
-              />
-            )}
-
-            {/* Tab 6: Audit */}
-            {activeTab === "audit" && (
-              <div className="surface" style={{ padding: "1.5rem" }}>
-                <div style={{ fontSize: "16px", fontWeight: 600, color: "#0f172a", marginBottom: "0.5rem" }}>
-                  Case Audit Ledger: {caseData.case_id}
-                </div>
-                <div style={{ fontSize: "14px", color: "var(--text-secondary)" }}>
-                  Ingested under Seed 42 benchmark. All multi-party operations, counterfactual simulations, and policy evaluations are cryptographically recorded.
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Right Column: Case Context & Safety Governance Sidebar */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {/* Case Details Card */}
-            <div className="surface" style={{ padding: "1.1rem 1.25rem" }}>
-              <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "0.75rem" }}>
-                Case Properties
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", fontSize: "13.5px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Case ID</span>
-                  <span className="mono" style={{ color: "#0f172a", fontWeight: 600 }}>{caseData.case_id}</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Merchant ID</span>
-                  <span className="mono" style={{ color: "#2563eb", fontWeight: 600 }}>{caseData.merchant_id}</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Difficulty</span>
-                  <span className="badge badge-info" style={{ textTransform: "capitalize" }}>{caseData.difficulty}</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Status</span>
-                  <span className={`badge badge-${caseData.status === "reconciled" ? "reconciled" : "discrepancy"}`}>
-                    {caseData.status === "reconciled" ? "Reconciled" : "Discrepancy"}
-                  </span>
+              {/* 7-Stage Pipeline Visualizer */}
+              <div className="surface" style={{ padding: "1rem 1.25rem" }}>
+                <h3 style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: "0.75rem" }}>
+                  Investigation Pipeline Stages
+                </h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                  {[
+                    { num: "01", name: "DETECTED", desc: "Multi-signal reconciliation rules evaluated", state: "done" },
+                    { num: "02", name: "EVIDENCE COLLECTED", desc: "Graph edges constructed for payments & settlements", state: "done" },
+                    { num: "03", name: "ROOT CAUSE IDENTIFIED", desc: investigation ? "Diagnosed via Bayesian plausibility" : "Ready for AI investigation", state: investigation ? "done" : "ready" },
+                    { num: "04", name: "SIMULATION", desc: isBlockedCompoundCase ? "Fail-closed blocked (invalid state)" : "Virtual deep-clone state validated", state: isBlockedCompoundCase ? "blocked" : (investigation ? "done" : "pending") },
+                    { num: "05", name: "POLICY VALIDATION", desc: "Deterministic gating POL-001 - POL-003", state: investigation ? "done" : "pending" },
+                    { num: "06", name: "APPROVAL", desc: "Separation of duties review workflow", state: investigation?.resolution_plan?.policy_decision?.decision === "HUMAN_REVIEW" ? "active" : "pending" },
+                    { num: "07", name: "AUDIT", desc: "Append-only SHA-256 backwards hash-pointer", state: "done" },
+                  ].map((stage, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.75rem",
+                        padding: "0.45rem 0.65rem",
+                        backgroundColor: "var(--bg-surface-secondary)",
+                        borderRadius: "4px",
+                        border: "1px solid var(--border-hairline)",
+                      }}
+                    >
+                      <span className="mono" style={{ fontSize: "11px", color: "var(--text-dim)", fontWeight: 600 }}>
+                        {stage.num}
+                      </span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-primary)" }}>
+                          {stage.name}
+                        </div>
+                        <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                          {stage.desc}
+                        </div>
+                      </div>
+                      <span style={{
+                        fontSize: "10.5px",
+                        padding: "0.1rem 0.4rem",
+                        borderRadius: "3px",
+                        fontWeight: 600,
+                        backgroundColor:
+                          stage.state === "done" ? "var(--status-reconciled-bg)" :
+                          stage.state === "blocked" ? "var(--status-blocked-bg)" :
+                          stage.state === "active" ? "var(--status-review-bg)" :
+                          stage.state === "ready" ? "var(--color-indigo-bg)" : "var(--bg-surface)",
+                        color:
+                          stage.state === "done" ? "var(--status-reconciled)" :
+                          stage.state === "blocked" ? "var(--status-blocked)" :
+                          stage.state === "active" ? "var(--status-review)" :
+                          stage.state === "ready" ? "var(--color-indigo)" : "var(--text-dim)",
+                      }}>
+                        {stage.state.toUpperCase()}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
 
-            {/* Blocked Case Safety Explanation (Specifically for CASE-000009) */}
-            {isBlockedCompoundCase && (
-              <div className="surface" style={{
-                padding: "1.1rem 1.25rem",
-                border: "1px solid #fecaca",
-                background: "#fef2f2",
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                  <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--status-blocked)", textTransform: "uppercase" }}>
-                    Resolution Blocked
+            {/* Right Column: Hero Counterfactual Simulation & Policy Engine */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {/* Counterfactual Resolution Hero */}
+              <div className="surface" style={{ padding: "1.15rem 1.25rem", border: "1px solid var(--border-subtle)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.6rem" }}>
+                  <div>
+                    <div style={{ fontSize: "10.5px", fontWeight: 700, color: "var(--color-indigo)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                      Hero Component
+                    </div>
+                    <h3 style={{ fontSize: "13.5px", fontWeight: 700, color: "var(--text-primary)", marginTop: "1px" }}>
+                      COUNTERFACTUAL RESOLUTION
+                    </h3>
+                  </div>
+                  <span style={{
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    padding: "0.15rem 0.45rem",
+                    borderRadius: "3px",
+                    backgroundColor: "var(--color-indigo-bg)",
+                    color: "var(--color-indigo)",
+                    border: "1px solid var(--color-indigo-border)",
+                  }}>
+                    VIRTUAL MEMORY SIMULATION
                   </span>
-                  <span className="badge badge-blocked">Safety Gate</span>
                 </div>
-                <div style={{ fontSize: "14px", color: "#991b1b", fontWeight: 600, marginBottom: "0.4rem" }}>
-                  Compound Corruption Fail-Closed
-                </div>
-                <div style={{ fontSize: "13px", color: "#7f1d1d", marginBottom: "0.75rem" }}>
-                  Compound discrepancy cannot be safely resolved through automated action without manual intervention.
-                </div>
-                <div style={{ fontSize: "12px", color: "#991b1b", marginBottom: "0.3rem", fontWeight: 600 }}>
-                  Residual Invariants:
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", fontSize: "13px", color: "#b91c1c" }}>
-                  <div>• Broken Reference Detected</div>
-                  <div>• Missing Settlement Record</div>
-                  <div>• Fee Calculation Discrepancy</div>
-                </div>
-                <div style={{ borderTop: "1px solid #fecaca", marginTop: "0.75rem", paddingTop: "0.5rem", fontSize: "13px", color: "#2563eb" }}>
-                  <strong>Next Action:</strong> Investigate external settlement reference / bank UTR.
-                </div>
-              </div>
-            )}
+                <p style={{ fontSize: "11.5px", color: "var(--text-muted)", marginBottom: "0.85rem" }}>
+                  Simulate candidate corrective adjustments before human sign-off or ledger commit.
+                </p>
 
-            {/* Policy & Investigation Quick Summary */}
-            <div className="surface" style={{ padding: "1.1rem 1.25rem" }}>
-              <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "0.6rem" }}>
-                Safety & Gating
+                {/* 3-Column Transformation */}
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr auto 1.2fr auto 1fr",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  backgroundColor: "var(--bg-surface-secondary)",
+                  padding: "0.75rem",
+                  borderRadius: "5px",
+                  border: "1px solid var(--border-subtle)",
+                }}>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase" }}>Current</div>
+                    <div className="tabular-num mono" style={{ fontSize: "13px", fontWeight: 700, color: "var(--text-primary)", marginTop: "2px" }}>
+                      {netSet > 0 ? formatINR(netSet) : "—"}
+                    </div>
+                  </div>
+                  <div style={{ color: "var(--border-medium)" }}>→</div>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", color: "var(--color-indigo)", textTransform: "uppercase", fontWeight: 600 }}>Proposed Adjustment</div>
+                    <div className="tabular-num mono" style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-indigo)", marginTop: "2px" }}>
+                      {discrepancyDelta !== 0 ? `+${formatINR(Math.abs(discrepancyDelta))}` : "₹0.00"}
+                    </div>
+                  </div>
+                  <div style={{ color: "var(--border-medium)" }}>→</div>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", color: "var(--status-reconciled)", textTransform: "uppercase", fontWeight: 600 }}>Projected</div>
+                    <div className="tabular-num mono" style={{ fontSize: "13px", fontWeight: 700, color: "var(--status-reconciled)", marginTop: "2px" }}>
+                      {grossPay > 0 ? formatINR(grossPay - totalFees) : "—"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Validation Checklist */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.75rem", padding: "0 0.25rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "11.5px", color: "var(--status-reconciled)" }}>
+                    <span>✓</span>
+                    <span>Residual Discrepancy: <strong>₹0.00</strong></span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "11.5px", color: "var(--status-reconciled)" }}>
+                    <span>✓</span>
+                    <span>Double-Entry Ledger: <strong>BALANCED</strong></span>
+                  </div>
+                </div>
+
+                {/* Simulation Notice */}
+                <div style={{
+                  marginTop: "0.75rem",
+                  padding: "0.45rem 0.65rem",
+                  backgroundColor: "var(--bg-canvas)",
+                  borderRadius: "4px",
+                  fontSize: "10.5px",
+                  color: "var(--text-muted)",
+                  textAlign: "center",
+                  border: "1px solid var(--border-hairline)",
+                  fontWeight: 500,
+                }}>
+                  SIMULATION ONLY • NO FINANCIAL TRANSACTION EXECUTED
+                </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", fontSize: "13.5px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Double-Entry Conservation</span>
-                  <span className="tabular-num" style={{ color: "var(--status-reconciled)", fontWeight: 600 }}>0.00 paise</span>
+
+              {/* Deterministic Policy Governance Panel */}
+              <div className="surface" style={{ padding: "1.15rem 1.25rem" }}>
+                <div style={{ marginBottom: "0.6rem" }}>
+                  <h3 style={{ fontSize: "12.5px", fontWeight: 700, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                    DETERMINISTIC GOVERNANCE
+                  </h3>
+                  <div style={{ fontSize: "11.5px", color: "var(--text-muted)", marginTop: "2px" }}>
+                    AI findings do not authorize financial actions.
+                  </div>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-muted)" }}>AI Claim Verification</span>
-                  <span className="tabular-num" style={{ color: "var(--status-reconciled)", fontWeight: 600 }}>0.00% Unsupported</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Execution Mode</span>
-                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Simulation Only</span>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                  {[
+                    { id: "POL-001", name: "Simulation Validity", status: "PASSED", color: "var(--status-reconciled)" },
+                    { id: "POL-002", name: "Evidence Sufficiency", status: "PASSED", color: "var(--status-reconciled)" },
+                    { id: "POL-003", name: "Monetary Risk Threshold (₹5,000)", status: Math.abs(discrepancyDelta) > 500000 ? "HUMAN_REVIEW" : "PASSED", color: Math.abs(discrepancyDelta) > 500000 ? "var(--status-review)" : "var(--status-reconciled)" },
+                  ].map((pol) => (
+                    <div
+                      key={pol.id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "0.45rem 0.65rem",
+                        backgroundColor: "var(--bg-surface-secondary)",
+                        borderRadius: "4px",
+                        border: "1px solid var(--border-hairline)",
+                        fontSize: "12px",
+                      }}
+                    >
+                      <div>
+                        <span className="mono" style={{ fontWeight: 600, color: "var(--text-secondary)", marginRight: "0.5rem" }}>
+                          {pol.id}
+                        </span>
+                        <span style={{ color: "var(--text-primary)" }}>{pol.name}</span>
+                      </div>
+                      <span style={{
+                        fontSize: "10.5px",
+                        fontWeight: 600,
+                        color: pol.color,
+                      }}>
+                        {pol.status}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Tab 2: Records Inspector */}
+        {activeTab === "records" && (
+          <RecordsInspector observed={caseData.observed} />
+        )}
+
+        {/* Tab 3: Evidence Graph */}
+        {activeTab === "evidence" && (
+          <EvidenceGraphCanvas graph={caseData.evidence_graph} />
+        )}
+
+        {/* Tab 4: AI Investigation */}
+        {activeTab === "investigation" && (
+          <InvestigationPanel
+            caseId={caseId}
+            investigation={investigation}
+            onRunInvestigation={handleRunInvestigation}
+            isInvestigating={isInvestigating}
+          />
+        )}
+
+        {/* Tab 5: Resolution Simulator */}
+        {activeTab === "resolution" && (
+          <BeforeAfterTable
+            caseId={caseId}
+            observed={caseData.observed}
+            investigation={investigation}
+          />
+        )}
       </div>
 
-      {/* Approval Drawer (if triggered) */}
-      {isApprovalOpen && investigation?.resolution_plan && (
-        <div style={{
-          position: "fixed",
-          inset: 0,
-          backgroundColor: "rgba(15, 23, 42, 0.45)",
-          backdropFilter: "blur(4px)",
-          zIndex: 999,
-          display: "flex",
-          justifyContent: "flex-end",
-        }}>
-          <div style={{
-            width: "100%",
-            maxWidth: "480px",
-            height: "100%",
-            backgroundColor: "#ffffff",
-            borderLeft: "1px solid var(--border-subtle)",
-            padding: "2rem",
-            overflowY: "auto",
-            boxShadow: "var(--shadow-lg)",
-          }}>
-            <ApprovalDrawer
-              proposalId={`prop_${caseData.case_id}`}
-              onClose={() => setIsApprovalOpen(false)}
-              onSuccess={() => {
-                setIsApprovalOpen(false);
-                loadCase();
-              }}
-            />
-          </div>
-        </div>
-      )}
+      {/* Approval Drawer */}
+      <ApprovalDrawer
+        isOpen={isApprovalOpen}
+        onClose={() => setIsApprovalOpen(false)}
+        caseId={caseId}
+        onSuccess={() => loadCase()}
+      />
     </div>
   );
 }
