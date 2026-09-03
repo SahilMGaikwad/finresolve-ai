@@ -54,7 +54,7 @@ class ApprovalDecisionRequest(BaseModel):
 
 
 class SeedBenchmarkRequest(BaseModel):
-    num_cases: int = 50
+    num_cases: int = 500
     seed: int = 42
     corruption_rate: float = 0.15
 
@@ -206,7 +206,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         """List cases with summary metrics for the Case Explorer table."""
         # Auto-seed if empty
         if not _case_repo._cases:
-            config = GeneratorConfig(seed=42, num_cases=50, corruption_rate=0.15)
+            config = GeneratorConfig(seed=42, num_cases=500, corruption_rate=0.15)
             cases, _ = generate_dataset(config)
             for c in cases:
                 await _case_repo.save(c)
@@ -240,7 +240,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         case = await _case_repo.get_by_id(valid_case_id)
         if not case:
             # Check if dynamically generated in batch
-            config = GeneratorConfig(seed=42, num_cases=50, corruption_rate=0.15)
+            config = GeneratorConfig(seed=42, num_cases=500, corruption_rate=0.15)
             cases, _ = generate_dataset(config)
             for c in cases:
                 await _case_repo.save(c)
